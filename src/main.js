@@ -2,45 +2,45 @@
 
 //           <-----------  TEMPLATES  ------------>
 const getInfoRouteTmpl = () => {
-    return `<div class="trip-info__main">
+  return `<div class="trip-info__main">
     <h1 class="trip-info__title">Amsterdam &mdash; Chamonix &mdash; Geneva</h1>
 
     <p class="trip-info__dates">Mar 18&nbsp;&mdash;&nbsp;20</p>
-  </div>`
+  </div>`;
 }; // additional task
 const getPriceTmpl = () => {
-    return `<p class="trip-info__cost">
+  return `<p class="trip-info__cost">
     Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
-  </p>`
-};     // additional task
+  </p>`;
+}; // additional task
 const getMenuTmpl = () => {
-    return `<nav class="trip-controls__trip-tabs  trip-tabs">
+  return `<nav class="trip-controls__trip-tabs  trip-tabs">
     <a class="trip-tabs__btn  trip-tabs__btn--active" href="#">Table</a>
     <a class="trip-tabs__btn" href="#">Stats</a>
-  </nav>`
+  </nav>`;
 };
-const getFiltersTmpl = () => { 
-    return `<form class="trip-filters" action="#" method="get">
-      <div class="trip-filters__filter">
-        <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" checked>
-        <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
-      </div>
+const getFiltersTmpl = () => {
+  return `<form class="trip-filters" action="#" method="get">
+    <div class="trip-filters__filter">
+      <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" checked>
+      <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
+    </div>
 
-      <div class="trip-filters__filter">
-        <input id="filter-future" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="future">
-        <label class="trip-filters__filter-label" for="filter-future">Future</label>
-      </div>
+    <div class="trip-filters__filter">
+      <input id="filter-future" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="future">
+      <label class="trip-filters__filter-label" for="filter-future">Future</label>
+    </div>
 
-      <div class="trip-filters__filter">
-        <input id="filter-past" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="past">
-        <label class="trip-filters__filter-label" for="filter-past">Past</label>
-      </div>
+    <div class="trip-filters__filter">
+      <input id="filter-past" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="past">
+      <label class="trip-filters__filter-label" for="filter-past">Past</label>
+    </div>
 
-      <button class="visually-hidden" type="submit">Accept filter</button>
-    </form>`
+    <button class="visually-hidden" type="submit">Accept filter</button>
+  </form>`;
 };
 const getSortTmpl = () => {
-    return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
+  return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
     <span class="trip-sort__item  trip-sort__item--day"></span>
 
     <div class="trip-sort__item  trip-sort__item--event">
@@ -63,86 +63,85 @@ const getSortTmpl = () => {
     </div>
 
     <span class="trip-sort__item  trip-sort__item--offers">Offers</span>
-  </form>`
+  </form>`;
 };
 const getFormEditTmpl = (details = false, destination = false) => {
-    let eventDestination = ``;
-    let eventDetails = ``;
+  let eventDestination = ``;
+  let eventDetails = ``;
 
-    if(destination) {
-        eventDestination = `<section class="event__section  event__section--destination">
-    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-    <p class="event__destination-description">Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.</p>
-
-    <div class="event__photos-container">
-      <div class="event__photos-tape">
-        <img class="event__photo" src="img/photos/1.jpg" alt="Event photo">
-        <img class="event__photo" src="img/photos/2.jpg" alt="Event photo">
-        <img class="event__photo" src="img/photos/3.jpg" alt="Event photo">
-        <img class="event__photo" src="img/photos/4.jpg" alt="Event photo">
-        <img class="event__photo" src="img/photos/5.jpg" alt="Event photo">
+  if (destination) {
+    eventDestination = `<section class="event__section  event__section--destination">
+        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+        <p class="event__destination-description">Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.</p>
+        <div class="event__photos-container">
+        <div class="event__photos-tape">
+          <img class="event__photo" src="img/photos/1.jpg" alt="Event photo">
+          <img class="event__photo" src="img/photos/2.jpg" alt="Event photo">
+          <img class="event__photo" src="img/photos/3.jpg" alt="Event photo">
+          <img class="event__photo" src="img/photos/4.jpg" alt="Event photo">
+          <img class="event__photo" src="img/photos/5.jpg" alt="Event photo">
+        </div>
       </div>
-    </div>
-  </section>`
-    }
+    </section>`;
+  }
 
-    if(details) {
-        eventDetails = `<section class="event__details">
-        <section class="event__section  event__section--offers">
-          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-    
-          <div class="event__available-offers">
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-              <label class="event__offer-label" for="event-offer-luggage-1">
-                <span class="event__offer-title">Add luggage</span>
-                &plus;
-                &euro;&nbsp;<span class="event__offer-price">30</span>
-              </label>
-            </div>
-    
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-comfort-1" type="checkbox" name="event-offer-comfort" checked>
-              <label class="event__offer-label" for="event-offer-comfort-1">
-                <span class="event__offer-title">Switch to comfort class</span>
-                &plus;
-                &euro;&nbsp;<span class="event__offer-price">100</span>
-              </label>
-            </div>
-    
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-meal-1" type="checkbox" name="event-offer-meal">
-              <label class="event__offer-label" for="event-offer-meal-1">
-                <span class="event__offer-title">Add meal</span>
-                &plus;
-                &euro;&nbsp;<span class="event__offer-price">15</span>
-              </label>
-            </div>
-    
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-seats-1" type="checkbox" name="event-offer-seats">
-              <label class="event__offer-label" for="event-offer-seats-1">
-                <span class="event__offer-title">Choose seats</span>
-                &plus;
-                &euro;&nbsp;<span class="event__offer-price">5</span>
-              </label>
-            </div>
-    
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-train-1" type="checkbox" name="event-offer-train">
-              <label class="event__offer-label" for="event-offer-train-1">
-                <span class="event__offer-title">Travel by train</span>
-                &plus;
-                &euro;&nbsp;<span class="event__offer-price">40</span>
-              </label>
-            </div>
+  if (details) {
+    eventDetails = `<section class="event__details">
+      <section class="event__section  event__section--offers">
+        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+
+        <div class="event__available-offers">
+          <div class="event__offer-selector">
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
+            <label class="event__offer-label" for="event-offer-luggage-1">
+              <span class="event__offer-title">Add luggage</span>
+              &plus;
+              &euro;&nbsp;<span class="event__offer-price">30</span>
+            </label>
           </div>
-        </section>
-        ${eventDestination}
-      </section>`;
-    };
 
-    const newEvent = `<form class="trip-events__item  event  event--edit" action="#" method="post">
+          <div class="event__offer-selector">
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-comfort-1" type="checkbox" name="event-offer-comfort" checked>
+            <label class="event__offer-label" for="event-offer-comfort-1">
+              <span class="event__offer-title">Switch to comfort class</span>
+              &plus;
+              &euro;&nbsp;<span class="event__offer-price">100</span>
+            </label>
+          </div>
+
+          <div class="event__offer-selector">
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-meal-1" type="checkbox" name="event-offer-meal">
+            <label class="event__offer-label" for="event-offer-meal-1">
+              <span class="event__offer-title">Add meal</span>
+              &plus;
+              &euro;&nbsp;<span class="event__offer-price">15</span>
+            </label>
+          </div>
+
+          <div class="event__offer-selector">
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-seats-1" type="checkbox" name="event-offer-seats">
+            <label class="event__offer-label" for="event-offer-seats-1">
+              <span class="event__offer-title">Choose seats</span>
+              &plus;
+              &euro;&nbsp;<span class="event__offer-price">5</span>
+            </label>
+          </div>
+
+          <div class="event__offer-selector">
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-train-1" type="checkbox" name="event-offer-train">
+            <label class="event__offer-label" for="event-offer-train-1">
+              <span class="event__offer-title">Travel by train</span>
+              &plus;
+              &euro;&nbsp;<span class="event__offer-price">40</span>
+            </label>
+          </div>
+        </div>
+      </section>
+      ${eventDestination}
+    </section>`;
+  }
+
+  const newEvent = `<form class="trip-events__item  event  event--edit" action="#" method="post">
     <header class="event__header">
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -249,21 +248,21 @@ const getFormEditTmpl = (details = false, destination = false) => {
       <button class="event__reset-btn" type="reset">Cancel</button>
     </header>
     ${eventDetails}
-  </form>`
-  
+  </form>`;
+
   return newEvent;
 };
 const getEvenstsContainer = () => {
   return `<ul class="trip-days">
-  <li class="trip-days__item  day">
-    <div class="day__info"></div>
-    <ul class="trip-events__list">
-    </ul>
-  </li>
-</ul>`
+    <li class="trip-days__item  day">
+      <div class="day__info"></div>
+      <ul class="trip-events__list">
+      </ul>
+    </li>
+  </ul>`;
 };
 const getEventTmpl = () => {
-    return `<div class="event">
+  return `<div class="event">
     <div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
     </div>
@@ -288,30 +287,30 @@ const getEventTmpl = () => {
         <span class="event__offer-title">Order Uber</span>
         &plus;
         &euro;&nbsp;<span class="event__offer-price">20</span>
-       </li>
+        </li>
     </ul>
 
     <button class="event__rollup-btn" type="button">
       <span class="visually-hidden">Open event</span>
     </button>
-  </div>`
+  </div>`;
 };
 
 
 //           <-----------  RENDERS' EXPRESSIONS  ------------>
 const render = (container, tmpl, place = `beforeend`) => {
-    container.insertAdjacentHTML(place, tmpl);
+  container.insertAdjacentHTML(place, tmpl);
 };
 const renderTripInfo = () => {
   const section = `<section class="trip-main__trip-info  trip-info">
-  ${getInfoRouteTmpl()}
-  ${getPriceTmpl()}
-  </section>`
+    ${getInfoRouteTmpl()}
+    ${getPriceTmpl()}
+    </section>`;
   render(tripMainElement, section, `afterbegin`);
 };
 const renderControls = () => {
   const tripControlsElemnt = tripMainElement.querySelector(`.trip-main__trip-controls`);
-  render(tripControlsElemnt.children[0], getMenuTmpl(), 'afterend');
+  render(tripControlsElemnt.children[0], getMenuTmpl(), `afterend`);
   render(tripControlsElemnt, getFiltersTmpl());
 };
 const renderSorts = () => {
@@ -324,13 +323,13 @@ const renderEvents = (number) => {
   render(tripEventsElement, getEvenstsContainer());
   const tripListElement = tripEventsElement.querySelector(`.trip-events__list`);
   const renderEvent = () => {
-    for(let i = 0; i < number; i++) {
+    for (let i = 0; i < number; i++) {
       const li = `<li class="trip-events__item">${getEventTmpl()}</li>`;
-        render(tripListElement, li);
+      render(tripListElement, li);
     }
-  }
+  };
   renderEvent();
-}
+};
 
 
 //           <-----------  RENDERS' CALLS ------------>
@@ -339,6 +338,6 @@ renderTripInfo(); // additional task
 renderControls();
 
 const tripEventsElement = document.querySelector(`.trip-events`);
-renderFormEdit()
+renderFormEdit();
 renderSorts();
 renderEvents(3);
