@@ -1,18 +1,19 @@
 'use strict';
 
-//           <-----------  TEMPLATES  ------------>
+const TASK_COUNT = 3;
+
 const getInfoRouteTmpl = () => {
   return `<div class="trip-info__main">
     <h1 class="trip-info__title">Amsterdam &mdash; Chamonix &mdash; Geneva</h1>
 
     <p class="trip-info__dates">Mar 18&nbsp;&mdash;&nbsp;20</p>
   </div>`;
-}; // additional task
+};
 const getPriceTmpl = () => {
   return `<p class="trip-info__cost">
     Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
   </p>`;
-}; // additional task
+};
 const getMenuTmpl = () => {
   return `<nav class="trip-controls__trip-tabs  trip-tabs">
     <a class="trip-tabs__btn  trip-tabs__btn--active" href="#">Table</a>
@@ -262,51 +263,54 @@ const getEvenstsContainer = () => {
   </ul>`;
 };
 const getEventTmpl = () => {
-  return `<div class="event">
-    <div class="event__type">
-      <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
-    </div>
-    <h3 class="event__title">Taxi to Amsterdam</h3>
+  return `<li class="trip-events__item">
+    <div class="event">
+      <div class="event__type">
+        <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
+      </div>
+      <h3 class="event__title">Taxi to Amsterdam</h3>
 
-    <div class="event__schedule">
-      <p class="event__time">
-        <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
-        &mdash;
-        <time class="event__end-time" datetime="2019-03-18T11:00">11:00</time>
+      <div class="event__schedule">
+        <p class="event__time">
+          <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
+          &mdash;
+          <time class="event__end-time" datetime="2019-03-18T11:00">11:00</time>
+        </p>
+        <p class="event__duration">30M</p>
+      </div>
+
+      <p class="event__price">
+        &euro;&nbsp;<span class="event__price-value">20</span>
       </p>
-      <p class="event__duration">30M</p>
+
+      <h4 class="visually-hidden">Offers:</h4>
+      <ul class="event__selected-offers">
+        <li class="event__offer">
+          <span class="event__offer-title">Order Uber</span>
+          &plus;
+          &euro;&nbsp;<span class="event__offer-price">20</span>
+          </li>
+      </ul>
+
+      <button class="event__rollup-btn" type="button">
+        <span class="visually-hidden">Open event</span>
+      </button>
     </div>
-
-    <p class="event__price">
-      &euro;&nbsp;<span class="event__price-value">20</span>
-    </p>
-
-    <h4 class="visually-hidden">Offers:</h4>
-    <ul class="event__selected-offers">
-      <li class="event__offer">
-        <span class="event__offer-title">Order Uber</span>
-        &plus;
-        &euro;&nbsp;<span class="event__offer-price">20</span>
-        </li>
-    </ul>
-
-    <button class="event__rollup-btn" type="button">
-      <span class="visually-hidden">Open event</span>
-    </button>
-  </div>`;
+    </li>`;
+};
+const getSectionTmpl = () => {
+  return `<section class="trip-main__trip-info  trip-info"></section>`;
 };
 
 
-//           <-----------  RENDERS' EXPRESSIONS  ------------>
 const render = (container, tmpl, place = `beforeend`) => {
   container.insertAdjacentHTML(place, tmpl);
 };
 const renderTripInfo = () => {
-  const section = `<section class="trip-main__trip-info  trip-info">
-    ${getInfoRouteTmpl()}
-    ${getPriceTmpl()}
-    </section>`;
-  render(tripMainElement, section, `afterbegin`);
+  render(tripMainElement, getSectionTmpl(), `afterbegin`);
+  const tripInfo = tripMainElement.querySelector(`.trip-main__trip-info`);
+  render(tripInfo, getInfoRouteTmpl());
+  render(tripInfo, getPriceTmpl());
 };
 const renderControls = () => {
   const tripControlsElemnt = tripMainElement.querySelector(`.trip-main__trip-controls`);
@@ -319,25 +323,22 @@ const renderSorts = () => {
 const renderFormEdit = () => {
   render(tripEventsElement, getFormEditTmpl());
 };
+const renderEvent = (count) => {
+  const tripListElement = tripEventsElement.querySelector(`.trip-events__list`);
+  for (let i = 0; i < count; i++) {
+    render(tripListElement, getEventTmpl());
+  }
+};
 const renderEvents = (number) => {
   render(tripEventsElement, getEvenstsContainer());
-  const tripListElement = tripEventsElement.querySelector(`.trip-events__list`);
-  const renderEvent = () => {
-    for (let i = 0; i < number; i++) {
-      const li = `<li class="trip-events__item">${getEventTmpl()}</li>`;
-      render(tripListElement, li);
-    }
-  };
-  renderEvent();
+  renderEvent(number);
 };
 
-
-//           <-----------  RENDERS' CALLS ------------>
 const tripMainElement = document.querySelector(`.trip-main`);
-renderTripInfo(); // additional task
+renderTripInfo();
 renderControls();
 
 const tripEventsElement = document.querySelector(`.trip-events`);
 renderFormEdit();
 renderSorts();
-renderEvents(3);
+renderEvents(TASK_COUNT);
