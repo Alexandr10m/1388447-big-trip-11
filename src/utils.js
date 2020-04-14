@@ -7,30 +7,30 @@ const castTimeFormat = (value) => {
 };
 
 const formatTime = (date) => {
-  const hours = castTimeFormat(date.getHours() % 12);
+  const hours = castTimeFormat(date.getHours());
   const minutes = castTimeFormat(date.getMinutes());
 
   return `${hours}:${minutes}`;
 };
 
 const formatDiffenceTime = (date) => {
-  const diff = Math.floor(date.finish.getTime() - date.start.getTime());
 
-  const minute = 1000 * 60;
+  const diffDays = date.finish.getDate() - date.start.getDate();
+  const diffHours = date.finish.getHours() - date.start.getHours();
+  const diffMinutes = date.finish.getMinutes() - date.start.getMinutes();
 
-  const minutes = Math.floor(diff / minute);
-  const hours = Math.floor(minutes / 24);
-  const days = Math.floor(hours / 30);
+
   let massege = ``;
 
-  if (days) {
-    massege += `${days}D `;
+  if (diffDays) {
+    massege += `${diffDays}D `;
   }
-  if (hours) {
-    massege += `${hours}H `;
+  if (diffHours) {
+
+    massege += `${diffHours}H `;
   }
-  if (minutes) {
-    massege += `${minutes}M`;
+  if (diffMinutes) {
+    massege += `${diffMinutes}M`;
   }
 
   return massege;

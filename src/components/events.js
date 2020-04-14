@@ -14,8 +14,8 @@ const getEventTmpl = ({typeOfPoint, city, price, offers, timeFrame}) => {
 
   const isActiveEvent = typeOfPoint === `Sightseeing` || typeOfPoint === `Check-in` || typeOfPoint === `Restaurant`;
 
-  const startTimeOfEvent = `${formatTime(timeFrame.start)}`;
-  const finishTimeOfEvent = `${timeFrame.finish.getHours()}:${timeFrame.finish.getMinutes()}`;
+  const startTimeOfEvent = formatTime(timeFrame.start);
+  const finishTimeOfEvent = formatTime(timeFrame.finish);
   const durationTime = formatDiffenceTime(timeFrame);
 
   const isOffersShowing = !!offers.length;
@@ -69,29 +69,6 @@ const getEventsByOneDayTmpl = (events, dayNumber) => {
       </ul>
     </li>`
   );
-};
-
-const groupingEventsInOrderForDays = (events) => {
-  const sortEvents = events.sort((first, second) => first.timeFrame.start.getTime() - second.timeFrame.start.getTime());
-
-  const groupedEventsByDays = [];
-  let day = 0;
-  const dateOfFirstDay = sortEvents[0].timeFrame.start.getDate();
-  let dateOfNewDay = dateOfFirstDay;
-  groupedEventsByDays[day] = [];
-
-  sortEvents.forEach((event) => {
-    if (dateOfNewDay - event.timeFrame.start.getDate() === 0) {
-      groupedEventsByDays[day].push(event);
-    }
-    if (dateOfNewDay - event.timeFrame.start.getDate() !== 0) {
-      dateOfNewDay = event.timeFrame.start.getDate();
-      day++;
-      groupedEventsByDays[day] = [];
-      groupedEventsByDays[day].push(event);
-    }
-  });
-  return groupedEventsByDays;
 };
 
 const getEvenstsforAllDaysTmpl = (eventsByDays) => {
