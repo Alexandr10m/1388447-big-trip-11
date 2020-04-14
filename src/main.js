@@ -3,14 +3,14 @@ import {getPriceTmpl} from './components/price';
 import {getMenuTmpl} from './components/menu';
 import {getFiltersTmpl} from './components/filters';
 import {getSortTmpl} from './components/sorts';
-import {getFormEditTmpl} from './components/form-editor';
-import {getEvenstsContainer} from './components/events-container';
-import {getEventTmpl} from './components/event';
+import {getFormEditorTmpl} from './components/form-editor';
+import {getEvenstsforAllDaysTmpl} from './components/events';
 import {getSectionTmpl} from './components/section';
-import {render} from './utils';
+import {render, groupingEventsInOrderForDays} from './utils';
+import {generateEvents} from './mock/event';
 
-const TASK_COUNT = 3;
-
+const EVENT_COUNT = 20;
+const events = groupingEventsInOrderForDays(generateEvents(EVENT_COUNT));
 const renderTripInfo = () => {
   render(tripMainElement, getSectionTmpl(), `afterbegin`);
   const tripInfo = tripMainElement.querySelector(`.trip-main__trip-info`);
@@ -26,17 +26,10 @@ const renderSorts = () => {
   render(tripEventsElement, getSortTmpl());
 };
 const renderFormEdit = () => {
-  render(tripEventsElement, getFormEditTmpl());
+  render(tripEventsElement, getFormEditorTmpl(events[0][0]));
 };
-const renderEvent = (count) => {
-  const tripListElement = tripEventsElement.querySelector(`.trip-events__list`);
-  for (let i = 0; i < count; i++) {
-    render(tripListElement, getEventTmpl());
-  }
-};
-const renderEvents = (number) => {
-  render(tripEventsElement, getEvenstsContainer());
-  renderEvent(number);
+const renderEvents = () => {
+  render(tripEventsElement, getEvenstsforAllDaysTmpl(events));
 };
 
 const tripMainElement = document.querySelector(`.trip-main`);
@@ -46,4 +39,4 @@ renderControls();
 const tripEventsElement = document.querySelector(`.trip-events`);
 renderFormEdit();
 renderSorts();
-renderEvents(TASK_COUNT);
+renderEvents(events);
