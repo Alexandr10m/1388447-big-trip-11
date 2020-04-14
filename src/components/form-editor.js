@@ -1,5 +1,6 @@
 import {TYPE_OF_TRIP_POINT} from '../constants';
 import {CITYES} from '../mock/event';
+import {formatFullTime} from '../utils';
 
 const getDestinationPhotoTmpl = (photos) => {
   const imgList = photos.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join(``);
@@ -50,8 +51,10 @@ const getOffersTmpl = (offers) => {
 
   return offersMarkup;
 };
-const getFormEditorTmpl = ({typeOfPoint, city = ``, price = ``, offers, destination: {description: distinationDescription, photos: destinationPhotos}}) => {
+const getFormEditorTmpl = ({typeOfPoint, city = ``, price = ``, offers, timeFrame, destination: {description: distinationDescription, photos: destinationPhotos}}) => {
   const index = 1;
+  const timeStart = formatFullTime(timeFrame.start);
+  const timeEnd = formatFullTime(timeFrame.finish);
   const optionsOfTypeEventMarkup = getListEventsTypeTmpl(TYPE_OF_TRIP_POINT, typeOfPoint);
   const optionsOfCityMarkup = getListOfCityesTmpl(CITYES);
 
@@ -91,12 +94,12 @@ const getFormEditorTmpl = ({typeOfPoint, city = ``, price = ``, offers, destinat
           <label class="visually-hidden" for="event-start-time-${index}">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-${index}" type="text" name="event-start-time" value="18/03/19 00:00">
+          <input class="event__input  event__input--time" id="event-start-time-${index}" type="text" name="event-start-time" value="${timeStart} 00:00">
           &mdash;
           <label class="visually-hidden" for="event-end-time-${index}">
             ${preposition}
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-${index}" type="text" name="event-end-time" value="18/03/19 00:00">
+          <input class="event__input  event__input--time" id="event-end-time-${index}" type="text" name="event-end-time" value="${timeEnd} 00:00">
         </div>
 
         <div class="event__field-group  event__field-group--price">

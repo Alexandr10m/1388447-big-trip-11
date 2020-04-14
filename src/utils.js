@@ -2,6 +2,7 @@ const render = (container, tmpl, place = `beforeend`) => {
   container.insertAdjacentHTML(place, tmpl);
 };
 
+
 const castTimeFormat = (value) => {
   return value < 10 ? `0${value}` : String(value);
 };
@@ -11,6 +12,13 @@ const formatTime = (date) => {
   const minutes = castTimeFormat(date.getMinutes());
 
   return `${hours}:${minutes}`;
+};
+
+const formatFullTime = (date) => {
+  const dateOfDay = castTimeFormat(date.getDate());
+  const hours = castTimeFormat(date.getHours());
+  const minutes = castTimeFormat(date.getMinutes());
+  return `${dateOfDay}/${hours}/${minutes}`;
 };
 
 const formatDiffenceTime = (date) => {
@@ -58,4 +66,4 @@ const groupingEventsInOrderForDays = (events) => {
   });
   return groupedEventsByDays;
 };
-export {render, formatTime, formatDiffenceTime, groupingEventsInOrderForDays};
+export {render, formatTime, formatDiffenceTime, groupingEventsInOrderForDays, formatFullTime};
