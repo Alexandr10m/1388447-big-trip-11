@@ -45,15 +45,13 @@ const formatDiffenceTime = (date) => {
 };
 
 const groupingEventsInOrderForDays = (events) => {
-  const sortEvents = events.sort((first, second) => first.timeFrame.start.getTime() - second.timeFrame.start.getTime());
-
   const groupedEventsByDays = [];
   let day = 0;
-  const dateOfFirstDay = sortEvents[0].timeFrame.start.getDate();
+  const dateOfFirstDay = events[0].timeFrame.start.getDate();
   let dateOfNewDay = dateOfFirstDay;
   groupedEventsByDays[day] = [];
 
-  sortEvents.forEach((event) => {
+  events.forEach((event) => {
     if (dateOfNewDay - event.timeFrame.start.getDate() === 0) {
       groupedEventsByDays[day].push(event);
     }

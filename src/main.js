@@ -10,7 +10,8 @@ import {render, groupingEventsInOrderForDays} from './utils';
 import {generateEvents} from './mock/event';
 
 const EVENT_COUNT = 20;
-const events = groupingEventsInOrderForDays(generateEvents(EVENT_COUNT));
+const events = generateEvents(EVENT_COUNT);
+
 const renderTripInfo = () => {
   render(tripMainElement, getSectionTmpl(), `afterbegin`);
   const tripInfo = tripMainElement.querySelector(`.trip-main__trip-info`);
@@ -26,10 +27,10 @@ const renderSorts = () => {
   render(tripEventsElement, getSortTmpl());
 };
 const renderFormEdit = () => {
-  render(tripEventsElement, getFormEditorTmpl(events[0][0]));
+  render(tripEventsElement, getFormEditorTmpl(events[0]));
 };
-const renderEvents = () => {
-  render(tripEventsElement, getEvenstsforAllDaysTmpl(events));
+const renderEvents = (allEvents) => {
+  render(tripEventsElement, getEvenstsforAllDaysTmpl(groupingEventsInOrderForDays(allEvents)));
 };
 
 const tripMainElement = document.querySelector(`.trip-main`);
@@ -37,6 +38,7 @@ renderTripInfo();
 renderControls();
 
 const tripEventsElement = document.querySelector(`.trip-events`);
+events.sort((prevEvent, nextEvent) => prevEvent.timeFrame.start.getTime() - nextEvent.timeFrame.start.getTime());
 renderFormEdit();
 renderSorts();
 renderEvents(events);
