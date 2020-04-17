@@ -22,40 +22,29 @@ const formatFullTime = (date) => {
 };
 
 const formatDiffenceTime = (date) => {
-
   const diffDays = date.finish.getDate() - date.start.getDate();
   const diffHours = date.finish.getHours() - date.start.getHours();
   const diffMinutes = date.finish.getMinutes() - date.start.getMinutes();
 
-
   let massege = ``;
 
-  if (diffDays) {
-    massege += `${diffDays}D `;
-  }
-  if (diffHours) {
-
-    massege += `${diffHours}H `;
-  }
-  if (diffMinutes) {
-    massege += `${diffMinutes}M`;
-  }
+  massege += diffDays ? `${diffDays}D ` : ``;
+  massege += diffHours ? `${diffHours}H ` : ``;
+  massege += diffMinutes ? `${diffMinutes}M` : ``;
 
   return massege;
 };
 
 const groupingEventsInOrderForDays = (events) => {
-  const groupedEventsByDays = [];
-  let day = 0;
+  const groupedEventsByDays = [[]];
   const dateOfFirstDay = events[0].timeFrame.start.getDate();
+  let day = 0;
   let dateOfNewDay = dateOfFirstDay;
-  groupedEventsByDays[day] = [];
 
   events.forEach((event) => {
-    if (dateOfNewDay - event.timeFrame.start.getDate() === 0) {
+    if (dateOfNewDay === event.timeFrame.start.getDate()) {
       groupedEventsByDays[day].push(event);
-    }
-    if (dateOfNewDay - event.timeFrame.start.getDate() !== 0) {
+    } else {
       dateOfNewDay = event.timeFrame.start.getDate();
       day++;
       groupedEventsByDays[day] = [];
