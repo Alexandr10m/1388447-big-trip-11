@@ -1,6 +1,6 @@
 import {TYPE_OF_TRIP_POINT} from '../constants';
 import {CITYES} from '../mock/event';
-import {formatFullTime} from '../utils';
+import {createElement, formatFullTime} from '../utils';
 
 const getDestinationPhotoTmpl = (photos) => {
   const imgList = photos.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join(``);
@@ -10,7 +10,7 @@ const getListOfCityesTmpl = (cityes) => {
   const listOfCityes = cityes.map((city) => `<option value="${city}"></option>`);
   return listOfCityes;
 };
-const getListEventsTypeTmpl = (eventsTypes, checked) => {
+const getListEventTypeTmpl = (eventsTypes, checked) => {
   const allEvents = eventsTypes.map((event, index) => {
     const isChecked = eventsTypes[index] === checked ? `checked` : ``;
     return (
@@ -55,7 +55,7 @@ const getFormEditorTmpl = ({typeOfPoint, city = ``, price = ``, offers, timeFram
   const index = 1;
   const timeStart = formatFullTime(timeFrame.start);
   const timeEnd = formatFullTime(timeFrame.finish);
-  const optionsOfTypeEventMarkup = getListEventsTypeTmpl(TYPE_OF_TRIP_POINT, typeOfPoint);
+  const optionsOfTypeEventMarkup = getListEventTypeTmpl(TYPE_OF_TRIP_POINT, typeOfPoint);
   const optionsOfCityMarkup = getListOfCityesTmpl(CITYES);
 
   const isActiveEvent = typeOfPoint === `Sightseeing` || typeOfPoint === `Check-in` || typeOfPoint === `Restaurant`;
@@ -137,4 +137,26 @@ const getFormEditorTmpl = ({typeOfPoint, city = ``, price = ``, offers, timeFram
   </form>`
   );
 };
-export {getFormEditorTmpl};
+
+export default class TaskEdit {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return getFormEditorTmpl(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

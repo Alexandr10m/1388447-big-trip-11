@@ -1,5 +1,5 @@
 import {MONTH_NAMES} from '../constants';
-import {formatTime, formatDiffenceTime} from '../utils';
+import {createElement, formatTime, formatDiffenceTime} from '../utils';
 
 const createOfferTmpl = ({title, price}) => {
   return (
@@ -80,4 +80,25 @@ const getEvenstsforAllDaysTmpl = (eventsByDays) => {
   );
 };
 
-export {getEvenstsforAllDaysTmpl};
+export default class Events {
+  constructor(events) {
+    this._events = events;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return getEvenstsforAllDaysTmpl(this._events);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
