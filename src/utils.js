@@ -1,5 +1,23 @@
-const render = (container, tmpl, place = `beforeend`) => {
-  container.insertAdjacentHTML(place, tmpl);
+const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`
+};
+
+const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+  return newElement.firstChild;
+};
+
+const render = (container, tmpl, place = RenderPosition.BEFOREEND) => {
+  switch (place) {
+    case RenderPosition.BEFOREEND:
+      container.append(tmpl);
+      break;
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(tmpl);
+      break;
+  }
 };
 
 
@@ -53,4 +71,4 @@ const groupingEventsInOrderForDays = (events) => {
   });
   return groupedEventsByDays;
 };
-export {render, formatTime, formatDiffenceTime, groupingEventsInOrderForDays, formatFullTime};
+export {render, createElement, RenderPosition, formatTime, formatDiffenceTime, groupingEventsInOrderForDays, formatFullTime};
