@@ -1,6 +1,7 @@
 import {MONTH_NAMES} from '../constants';
 import {createElement} from '../utils';
 import EventComponent from './event';
+// import EventEditComponenet from './components/form-editor';
 
 const getEventsByOneDayTmpl = (events, dayNumber) => {
   const dateOfDay = events[0].timeFrame.start.getDate();
