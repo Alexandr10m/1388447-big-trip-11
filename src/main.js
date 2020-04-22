@@ -8,6 +8,7 @@ import SortsComponent from './components/sorts';
 import TripDaysComponent from './components/trip-days';
 import TripDayComponent from './components/trip-day';
 import EventComponent from './components/event';
+import NoPointsComponent from './components/no-points';
 import {render, RenderPosition, groupingEventsInOrderForDays} from './utils';
 import {generateEvents} from './mock/event';
 
@@ -67,9 +68,16 @@ const renderDay = (events, dayNumber, tripDaysList) => {
   render(tripDaysList, newDayComponent.getElement());
 };
 const renderTripEvents = (allEvents) => {
+  const tripDaysComponent = new TripDaysComponent();
+
+  const isNoEvents = allEvents.length === 0;
+  if (isNoEvents) {
+    render(tripEventsElement, new NoPointsComponent().getElement());
+    return;
+  }
+
   const sortEvents = groupingEventsInOrderForDays(allEvents);
 
-  const tripDaysComponent = new TripDaysComponent();
   render(tripEventsElement, tripDaysComponent.getElement());
 
   const tripDaysList = tripDaysComponent.getElement();
