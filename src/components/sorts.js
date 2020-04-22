@@ -1,6 +1,6 @@
 import {createElement} from '../utils';
 
-const getSortTmpl = () => {
+const createSortTmpl = () => {
   return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
     <span class="trip-sort__item  trip-sort__item--day"></span>
 
@@ -33,7 +33,7 @@ export default class Sorts {
   }
 
   getTemplate() {
-    return getSortTmpl();
+    return createSortTmpl();
   }
 
   getElement() {

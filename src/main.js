@@ -1,21 +1,21 @@
-import TripInfoSectionComponent from './components/section';
-import TripInfonComponent from './components/trip-info';
-import PriceComponent from './components/price';
+import TripInfoComponent from './components/trip-info';
+import InfoTitlenComponent from './components/info-title';
+import InfoPriceComponent from './components/info-price';
 import MenuComponent from './components/menu';
 import FiltersComponent from './components/filters';
 import EventEditComponenet from './components/form-editor';
 import SortsComponent from './components/sorts';
-import EventsComponent from './components/events';
+import EventsComponent from './components/trip-days';
 import {render, RenderPosition, groupingEventsInOrderForDays} from './utils';
 import {generateEvents} from './mock/event';
 
 const EVENT_COUNT = 20;
 
 const renderTripInfo = () => {
-  const tripInfoContainer = new TripInfoSectionComponent();
+  const tripInfoContainer = new TripInfoComponent();
   render(tripMainElement, tripInfoContainer.getElement(), RenderPosition.AFTERBEGIN);
-  render(tripInfoContainer.getElement(), new TripInfonComponent().getElement());
-  render(tripInfoContainer.getElement(), new PriceComponent().getElement());
+  render(tripInfoContainer.getElement(), new InfoTitlenComponent().getElement());
+  render(tripInfoContainer.getElement(), new InfoPriceComponent().getElement());
 };
 const renderControls = () => {
   const tripControlsElemnt = tripMainElement.querySelector(`.trip-main__trip-controls`);

@@ -10,7 +10,7 @@ const createOfferTmpl = ({title, price}) => {
   );
 };
 
-const getEventTmpl = ({typeOfPoint, city, price, offers, timeFrame}) => {
+const createEventTmpl = ({typeOfPoint, city, price, offers, timeFrame}) => {
 
   const isActiveEvent = typeOfPoint === `Sightseeing` || typeOfPoint === `Check-in` || typeOfPoint === `Restaurant`;
 
@@ -60,7 +60,7 @@ export default class Event {
   }
 
   getTemplate() {
-    return getEventTmpl(this._dataEvent);
+    return createEventTmpl(this._dataEvent);
   }
 
   getElement() {

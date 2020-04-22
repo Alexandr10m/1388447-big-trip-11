@@ -1,6 +1,6 @@
 import {createElement} from '../utils';
 
-const getFiltersTmpl = () => {
+const createFiltersTmpl = () => {
   return `<form class="trip-filters" action="#" method="get">
     <div class="trip-filters__filter">
       <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" checked>
@@ -27,7 +27,7 @@ export default class Filters {
   }
 
   getTemplate() {
-    return getFiltersTmpl();
+    return createFiltersTmpl();
   }
 
   getElement() {

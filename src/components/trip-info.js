@@ -1,11 +1,7 @@
 import {createElement} from '../utils';
 
-const getInfoRouteTmpl = () => {
-  return `<div class="trip-info__main">
-    <h1 class="trip-info__title">Amsterdam &mdash; Chamonix &mdash; Geneva</h1>
-
-    <p class="trip-info__dates">Mar 18&nbsp;&mdash;&nbsp;20</p>
-  </div>`;
+const createTripInfoContainerTmpl = () => {
+  return `<section class="trip-main__trip-info  trip-info"></section>`;
 };
 
 export default class TripInfo {
@@ -14,7 +10,7 @@ export default class TripInfo {
   }
 
   getTemplate() {
-    return getInfoRouteTmpl();
+    return createTripInfoContainerTmpl();
   }
 
   getElement() {

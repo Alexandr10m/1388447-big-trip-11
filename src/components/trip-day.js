@@ -1,9 +1,8 @@
 import {MONTH_NAMES} from '../constants';
 import {createElement} from '../utils';
 import EventComponent from './event';
-// import EventEditComponenet from './components/form-editor';
 
-const getEventsByOneDayTmpl = (events, dayNumber) => {
+export const createDayTmpl = (events, dayNumber) => {
   const dateOfDay = events[0].timeFrame.start.getDate();
   const month = events[0].timeFrame.start.getMonth();
   const eventsMarkup = events.map((event) => new EventComponent(event).getTemplate()).join(``);
@@ -21,23 +20,14 @@ const getEventsByOneDayTmpl = (events, dayNumber) => {
   );
 };
 
-const getEvenstsforAllDaysTmpl = (eventsByDays) => {
-  const eventsByDaysMarkup = eventsByDays.map((eventsByOneDay, index) => getEventsByOneDayTmpl(eventsByOneDay, index + 1)).join(``);
-  return (
-    `<ul class="trip-days">
-      ${eventsByDaysMarkup}
-    </ul>`
-  );
-};
-
-export default class Events {
+export default class TripDay {
   constructor(events) {
     this._events = events;
     this._element = null;
   }
 
   getTemplate() {
-    return getEvenstsforAllDaysTmpl(this._events);
+    return createDayTmpl(this._events);
   }
 
   getElement() {
