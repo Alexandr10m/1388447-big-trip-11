@@ -12,11 +12,9 @@ export default class NoPoints {
   constructor() {
     this._element = null;
   }
-
   getTemplate() {
     return createNoPointsTmpl();
   }
-
   getElement() {
     if (!this._element) {
       this._element = createElement(this.getTemplate());
@@ -24,7 +22,6 @@ export default class NoPoints {
 
     return this._element;
   }
-
   removeElement() {
     this._element = null;
   }

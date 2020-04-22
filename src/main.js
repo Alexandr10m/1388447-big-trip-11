@@ -77,9 +77,7 @@ const renderTripEvents = (allEvents) => {
   }
 
   const sortEvents = groupingEventsInOrderForDays(allEvents);
-
   render(tripEventsElement, tripDaysComponent.getElement());
-
   const tripDaysList = tripDaysComponent.getElement();
   sortEvents.forEach((eventsForday, index) => renderDay(eventsForday, index + 1, tripDaysList));
 };
