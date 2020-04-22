@@ -1,11 +1,10 @@
 import {MONTH_NAMES} from '../constants';
 import {createElement} from '../utils';
-import EventComponent from './event';
+
 
 export const createDayTmpl = (events, dayNumber) => {
   const dateOfDay = events[0].timeFrame.start.getDate();
   const month = events[0].timeFrame.start.getMonth();
-  const eventsMarkup = events.map((event) => new EventComponent(event).getTemplate()).join(``);
 
   return (
     `<li class="trip-days__item  day">
@@ -14,20 +13,20 @@ export const createDayTmpl = (events, dayNumber) => {
         <time class="day__date" datetime="2019-03-18">${MONTH_NAMES[month]} ${dateOfDay}</time>
       </div>
       <ul class="trip-events__list">
-        ${eventsMarkup}
       </ul>
     </li>`
   );
 };
 
 export default class TripDay {
-  constructor(events) {
+  constructor(events, dayNumber) {
     this._events = events;
+    this._dayNumber = dayNumber;
     this._element = null;
   }
 
   getTemplate() {
-    return createDayTmpl(this._events);
+    return createDayTmpl(this._events, this._dayNumber);
   }
 
   getElement() {

@@ -1,18 +1,14 @@
 import {createElement} from '../utils';
-import {createDayTmpl} from './trip-day';
 
-const createTripDaysTmpl = (events) => {
-  const daysMarkup = events.map((eventsByOneDay, index) => createDayTmpl(eventsByOneDay, index + 1)).join(``);
+const createTripDaysTmpl = () => {
   return (
     `<ul class="trip-days">
-      ${daysMarkup}
     </ul>`
   );
 };
 
 export default class TripDays {
-  constructor(events) {
-    this._events = events;
+  constructor() {
     this._element = null;
   }
 
