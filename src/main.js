@@ -8,6 +8,7 @@ import SortsComponent from './components/sorts';
 import TripDaysComponent from './components/trip-days';
 import TripDayComponent from './components/trip-day';
 import EventComponent from './components/event';
+import NoPointsComponent from './components/no-points';
 import {render, RenderPosition, groupingEventsInOrderForDays} from './utils';
 import {generateEvents} from './mock/event';
 
@@ -34,17 +35,27 @@ const renderEvent = (event, tripEventsList) => {
   const replaceEditorToEvent = () => {
     tripEventsList.replaceChild(eventComponent.getElement(), eventEditorComponent.getElement());
   };
+  const onEscKeyDown = (evt) => {
+    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+
+    if (isEscKey) {
+      replaceEditorToEvent();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
 
   const eventComponent = new EventComponent(event);
   const editButton = eventComponent.getElement().querySelector(`.event__rollup-btn`);
   editButton.addEventListener(`click`, () => {
     replaceEventToEditor();
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   const eventEditorComponent = new EventEditorComponent(event);
   eventEditorComponent.getElement().addEventListener(`submit`, (evt) => {
     evt.preventDefault();
     replaceEditorToEvent();
+    document.removeEventListener(`keydown`, onEscKeyDown);
   });
   render(tripEventsList, eventComponent.getElement());
 };
@@ -57,11 +68,16 @@ const renderDay = (events, dayNumber, tripDaysList) => {
   render(tripDaysList, newDayComponent.getElement());
 };
 const renderTripEvents = (allEvents) => {
-  const sortEvents = groupingEventsInOrderForDays(allEvents);
-
   const tripDaysComponent = new TripDaysComponent();
-  render(tripEventsElement, tripDaysComponent.getElement());
 
+  const isNoEvents = allEvents.length === 0;
+  if (isNoEvents) {
+    render(tripEventsElement, new NoPointsComponent().getElement());
+    return;
+  }
+
+  const sortEvents = groupingEventsInOrderForDays(allEvents);
+  render(tripEventsElement, tripDaysComponent.getElement());
   const tripDaysList = tripDaysComponent.getElement();
   sortEvents.forEach((eventsForday, index) => renderDay(eventsForday, index + 1, tripDaysList));
 };
