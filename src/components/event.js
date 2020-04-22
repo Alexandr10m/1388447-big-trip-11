@@ -1,5 +1,4 @@
-import {MONTH_NAMES} from '../constants';
-import {formatTime, formatDiffenceTime} from '../utils';
+import {createElement, formatTime, formatDiffenceTime} from '../utils';
 
 const createOfferTmpl = ({title, price}) => {
   return (
@@ -10,7 +9,8 @@ const createOfferTmpl = ({title, price}) => {
     </li>`
   );
 };
-const getEventTmpl = ({typeOfPoint, city, price, offers, timeFrame}) => {
+
+const createEventTmpl = ({typeOfPoint, city, price, offers, timeFrame}) => {
 
   const isActiveEvent = typeOfPoint === `Sightseeing` || typeOfPoint === `Check-in` || typeOfPoint === `Restaurant`;
 
@@ -53,31 +53,25 @@ const getEventTmpl = ({typeOfPoint, city, price, offers, timeFrame}) => {
     </li>`;
 };
 
-const getEventsByOneDayTmpl = (events, dayNumber) => {
-  const dateOfDay = events[0].timeFrame.start.getDate();
-  const month = events[0].timeFrame.start.getMonth();
-  const eventsMarkup = events.map((event) => getEventTmpl(event)).join(``);
+export default class Event {
+  constructor(dataEvent) {
+    this._dataEvent = dataEvent;
+    this._element = null;
+  }
 
-  return (
-    `<li class="trip-days__item  day">
-      <div class="day__info">
-        <span class="day__counter">${dayNumber}</span>
-        <time class="day__date" datetime="2019-03-18">${MONTH_NAMES[month]} ${dateOfDay}</time>
-      </div>
-      <ul class="trip-events__list">
-        ${eventsMarkup}
-      </ul>
-    </li>`
-  );
-};
+  getTemplate() {
+    return createEventTmpl(this._dataEvent);
+  }
 
-const getEvenstsforAllDaysTmpl = (eventsByDays) => {
-  const eventsByDaysMarkup = eventsByDays.map((eventsByOneDay, index) => getEventsByOneDayTmpl(eventsByOneDay, index + 1)).join(``);
-  return (
-    `<ul class="trip-days">
-      ${eventsByDaysMarkup}
-    </ul>`
-  );
-};
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
 
-export {getEvenstsforAllDaysTmpl};
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

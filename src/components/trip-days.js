@@ -1,16 +1,19 @@
 import {createElement} from '../utils';
 
-const createTripInfoContainerTmpl = () => {
-  return `<section class="trip-main__trip-info  trip-info"></section>`;
+const createTripDaysTmpl = () => {
+  return (
+    `<ul class="trip-days">
+    </ul>`
+  );
 };
 
-export default class TripInfo {
+export default class TripDays {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createTripInfoContainerTmpl();
+    return createTripDaysTmpl(this._events);
   }
 
   getElement() {

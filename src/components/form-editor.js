@@ -1,16 +1,16 @@
 import {TYPE_OF_TRIP_POINT} from '../constants';
 import {CITYES} from '../mock/event';
-import {formatFullTime} from '../utils';
+import {createElement, formatFullTime} from '../utils';
 
-const getDestinationPhotoTmpl = (photos) => {
+const createDestinationPhotoTmpl = (photos) => {
   const imgList = photos.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join(``);
   return imgList;
 };
-const getListOfCityesTmpl = (cityes) => {
+const createListOfCityesTmpl = (cityes) => {
   const listOfCityes = cityes.map((city) => `<option value="${city}"></option>`);
   return listOfCityes;
 };
-const getListEventsTypeTmpl = (eventsTypes, checked) => {
+const createListEventTypeTmpl = (eventsTypes, checked) => {
   const allEvents = eventsTypes.map((event, index) => {
     const isChecked = eventsTypes[index] === checked ? `checked` : ``;
     return (
@@ -35,7 +35,7 @@ const getListEventsTypeTmpl = (eventsTypes, checked) => {
   </fieldset>`
   );
 };
-const getOffersTmpl = (offers) => {
+const createOffersTmpl = (offers) => {
   const offersMarkup = offers.map((offer, index) => {
     const isChecked = index === 0 || index === 1 ? `checked=""` : ``;
     return `
@@ -51,20 +51,20 @@ const getOffersTmpl = (offers) => {
 
   return offersMarkup;
 };
-const getFormEditorTmpl = ({typeOfPoint, city = ``, price = ``, offers, timeFrame, destination: {description: distinationDescription, photos: destinationPhotos}}) => {
+const createFormEditorTmpl = ({typeOfPoint, city = ``, price = ``, offers, timeFrame, destination: {description: distinationDescription, photos: destinationPhotos}}) => {
   const index = 1;
   const timeStart = formatFullTime(timeFrame.start);
   const timeEnd = formatFullTime(timeFrame.finish);
-  const optionsOfTypeEventMarkup = getListEventsTypeTmpl(TYPE_OF_TRIP_POINT, typeOfPoint);
-  const optionsOfCityMarkup = getListOfCityesTmpl(CITYES);
+  const optionsOfTypeEventMarkup = createListEventTypeTmpl(TYPE_OF_TRIP_POINT, typeOfPoint);
+  const optionsOfCityMarkup = createListOfCityesTmpl(CITYES);
 
   const isActiveEvent = typeOfPoint === `Sightseeing` || typeOfPoint === `Check-in` || typeOfPoint === `Restaurant`;
   const preposition = isActiveEvent ? `In` : `To`;
 
   const isOffersShowing = !!offers.length;
-  const offersMarkup = isOffersShowing ? getOffersTmpl(offers) : ``;
+  const offersMarkup = isOffersShowing ? createOffersTmpl(offers) : ``;
 
-  const destinationPhotosMarkup = getDestinationPhotoTmpl(destinationPhotos);
+  const destinationPhotosMarkup = createDestinationPhotoTmpl(destinationPhotos);
   const isDistinationShowing = !!distinationDescription;
 
   return (
@@ -137,4 +137,26 @@ const getFormEditorTmpl = ({typeOfPoint, city = ``, price = ``, offers, timeFram
   </form>`
   );
 };
-export {getFormEditorTmpl};
+
+export default class EventEditor {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFormEditorTmpl(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
