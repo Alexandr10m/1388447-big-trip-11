@@ -34,17 +34,27 @@ const renderEvent = (event, tripEventsList) => {
   const replaceEditorToEvent = () => {
     tripEventsList.replaceChild(eventComponent.getElement(), eventEditorComponent.getElement());
   };
+  const onEscKeyDown = (evt) => {
+    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+
+    if (isEscKey) {
+      replaceEditorToEvent();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
 
   const eventComponent = new EventComponent(event);
   const editButton = eventComponent.getElement().querySelector(`.event__rollup-btn`);
   editButton.addEventListener(`click`, () => {
     replaceEventToEditor();
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   const eventEditorComponent = new EventEditorComponent(event);
   eventEditorComponent.getElement().addEventListener(`submit`, (evt) => {
     evt.preventDefault();
     replaceEditorToEvent();
+    document.removeEventListener(`keydown`, onEscKeyDown);
   });
   render(tripEventsList, eventComponent.getElement());
 };
