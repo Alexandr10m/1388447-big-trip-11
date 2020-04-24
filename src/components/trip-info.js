@@ -1,27 +1,12 @@
-import {createElement} from '../utils';
+import AbstractComponent from "./abstract-componenet.js";
+
 
 const createTripInfoContainerTmpl = () => {
   return `<section class="trip-main__trip-info  trip-info"></section>`;
 };
 
-export default class TripInfo {
-  constructor() {
-    this._element = null;
-  }
-
+export default class TripInfo extends AbstractComponent {
   getTemplate() {
     return createTripInfoContainerTmpl();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

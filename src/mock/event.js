@@ -1,4 +1,4 @@
-import {TYPE_OF_TRIP_POINT} from '../constants';
+import {TYPE_OF_TRIP_POINT} from "../constants.js";
 const CITYES = [
   `Amsterdam`,
   `Moscow`,
