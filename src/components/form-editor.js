@@ -1,6 +1,6 @@
 import {TYPE_OF_TRIP_POINT} from '../constants';
 import {CITYES} from '../mock/event';
-import {formatFullTime} from '../utils';
+import {formatFullTime} from '../utils/common';
 import AbstractComponent from './abstract-componenet';
 
 const createDestinationPhotoTmpl = (photos) => {

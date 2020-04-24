@@ -9,7 +9,8 @@ import TripDaysComponent from './components/trip-days';
 import TripDayComponent from './components/trip-day';
 import EventComponent from './components/event';
 import NoPointsComponent from './components/no-points';
-import {render, RenderPosition, groupingEventsInOrderForDays} from './utils';
+import {render, RenderPosition} from './utils/render';
+import {groupingEventsInOrderForDays} from './utils/common';
 import {generateEvents} from './mock/event';
 
 const EVENT_COUNT = 20;

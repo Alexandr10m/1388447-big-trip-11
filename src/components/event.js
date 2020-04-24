@@ -1,4 +1,4 @@
-import {formatTime, formatDiffenceTime} from '../utils';
+import {formatTime, formatDiffenceTime} from '../utils/common';
 import AbstractComponent from './abstract-componenet';
 
 const createOfferTmpl = ({title, price}) => {
