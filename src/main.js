@@ -21,14 +21,17 @@ const renderTripInfo = () => {
   render(tripInfoContainer.getElement(), new InfoTitlenComponent());
   render(tripInfoContainer.getElement(), new InfoPriceComponent());
 };
+
 const renderControls = () => {
   const tripControlsElemnt = tripMainElement.querySelector(`.trip-main__trip-controls`);
   render(tripControlsElemnt.children[0], new MenuComponent(), RenderPosition.AFTEREND);
   render(tripControlsElemnt, new FiltersComponent());
 };
+
 const renderSorts = () => {
   render(tripEventsElement, new SortsComponent());
 };
+
 const renderEvent = (event, tripEventsList) => {
   const replaceEventToEditor = () => {
     replace(eventEditorComponent, eventComponent);
@@ -36,9 +39,9 @@ const renderEvent = (event, tripEventsList) => {
   const replaceEditorToEvent = () => {
     replace(eventComponent, eventEditorComponent);
   };
+
   const onEscKeyDown = (evt) => {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-
     if (isEscKey) {
       replaceEditorToEvent();
       document.removeEventListener(`keydown`, onEscKeyDown);
@@ -46,20 +49,20 @@ const renderEvent = (event, tripEventsList) => {
   };
 
   const eventComponent = new EventComponent(event);
-  const editButton = eventComponent.getElement().querySelector(`.event__rollup-btn`);
-  editButton.addEventListener(`click`, () => {
+  eventComponent.setEditButtonClickHandler(() => {
     replaceEventToEditor();
     document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   const eventEditorComponent = new EventEditorComponent(event);
-  eventEditorComponent.getElement().addEventListener(`submit`, (evt) => {
+  eventEditorComponent.setFormSubmitHandler((evt) => {
     evt.preventDefault();
     replaceEditorToEvent();
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
   render(tripEventsList, eventComponent);
 };
+
 const renderDay = (events, dayNumber, tripDaysList) => {
   const newDayComponent = new TripDayComponent(events, dayNumber);
   const tripEventsList = newDayComponent.getElement().querySelector(`.trip-events__list`);
