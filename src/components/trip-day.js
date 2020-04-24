@@ -1,5 +1,5 @@
-import {MONTH_NAMES} from '../constants';
-import AbstractComponent from './abstract-componenet';
+import {MONTH_NAMES} from "../constants.js";
+import AbstractComponent from "./abstract-componenet.js";
 
 
 const createDayTmpl = (events, dayNumber) => {

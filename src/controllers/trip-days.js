@@ -1,9 +1,9 @@
-import EventEditorComponent from '../components/form-editor';
-import TripDayComponent from '../components/trip-day';
-import EventComponent from '../components/event';
-import NoPointsComponent from '../components/no-points';
-import {groupingEventsInOrderForDays} from '../utils/common';
-import {render, replace} from '../utils/render';
+import EventEditorComponent from "../components/form-editor.js";
+import TripDayComponent from "../components/trip-day.js";
+import EventComponent from "../components/event.js";
+import NoPointsComponent from "../components/no-points.js";
+import {groupingEventsInOrderForDays} from "../utils/common.js";
+import {render, replace} from "../utils/render.js";
 
 const renderEvent = (event, tripEventsList) => {
   const replaceEventToEditor = () => {

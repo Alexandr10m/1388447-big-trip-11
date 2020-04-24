@@ -1,7 +1,7 @@
-import {TYPE_OF_TRIP_POINT} from '../constants';
-import {CITYES} from '../mock/event';
-import {formatFullTime} from '../utils/common';
-import AbstractComponent from './abstract-componenet';
+import {TYPE_OF_TRIP_POINT} from "../constants.js";
+import {CITYES} from "../mock/event.js";
+import {formatFullTime} from "../utils/common.js";
+import AbstractComponent from "./abstract-componenet.js";
 
 const createDestinationPhotoTmpl = (photos) => {
   const imgList = photos.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join(``);

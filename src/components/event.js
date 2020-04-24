@@ -1,5 +1,5 @@
-import {formatTime, formatDiffenceTime} from '../utils/common';
-import AbstractComponent from './abstract-componenet';
+import {formatTime, formatDiffenceTime} from "../utils/common.js";
+import AbstractComponent from "./abstract-componenet.js";
 
 const createOfferTmpl = ({title, price}) => {
   return (

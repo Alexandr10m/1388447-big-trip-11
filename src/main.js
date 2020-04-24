@@ -1,13 +1,13 @@
-import TripInfoComponent from './components/trip-info';
-import InfoTitlenComponent from './components/info-route';
-import InfoPriceComponent from './components/info-price';
-import MenuComponent from './components/menu';
-import FiltersComponent from './components/filters';
-import SortsComponent from './components/sorts';
-import TripDaysComponent from './components/trip-days';
-import {render, RenderPosition} from './utils/render';
-import {generateEvents} from './mock/event';
-import TripController from './controllers/trip-days';
+import TripInfoComponent from "./components/trip-info.js";
+import InfoTitlenComponent from "./components/info-route.js";
+import InfoPriceComponent from "./components/info-price.js";
+import MenuComponent from "./components/menu.js";
+import FiltersComponent from "./components/filters.js";
+import SortsComponent from "./components/sorts.js";
+import TripDaysComponent from "./components/trip-days.js";
+import {render, RenderPosition} from "./utils/render.js";
+import {generateEvents} from "./mock/event.js";
+import TripController from "./controllers/trip-days.js";
 
 const EVENT_COUNT = 20;
 

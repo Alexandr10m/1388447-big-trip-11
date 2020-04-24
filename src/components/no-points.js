@@ -1,4 +1,4 @@
-import AbstractComponent from './abstract-componenet';
+import AbstractComponent from "./abstract-componenet.js";
 
 
 const createNoPointsTmpl = () => {
