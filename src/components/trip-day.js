@@ -1,8 +1,8 @@
 import {MONTH_NAMES} from '../constants';
-import {createElement} from '../utils';
+import AbstractComponent from './abstract-componenet';
 
 
-export const createDayTmpl = (events, dayNumber) => {
+const createDayTmpl = (events, dayNumber) => {
   const dateOfDay = events[0].timeFrame.start.getDate();
   const month = events[0].timeFrame.start.getMonth();
 
@@ -18,26 +18,14 @@ export const createDayTmpl = (events, dayNumber) => {
   );
 };
 
-export default class TripDay {
+export default class TripDay extends AbstractComponent {
   constructor(events, dayNumber) {
+    super();
     this._events = events;
     this._dayNumber = dayNumber;
-    this._element = null;
   }
 
   getTemplate() {
     return createDayTmpl(this._events, this._dayNumber);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

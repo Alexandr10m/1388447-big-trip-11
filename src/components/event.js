@@ -1,4 +1,5 @@
-import {createElement, formatTime, formatDiffenceTime} from '../utils';
+import {formatTime, formatDiffenceTime} from '../utils';
+import AbstractComponent from './abstract-componenet';
 
 const createOfferTmpl = ({title, price}) => {
   return (
@@ -53,25 +54,13 @@ const createEventTmpl = ({typeOfPoint, city, price, offers, timeFrame}) => {
     </li>`;
 };
 
-export default class Event {
+export default class Event extends AbstractComponent {
   constructor(dataEvent) {
+    super();
     this._dataEvent = dataEvent;
-    this._element = null;
   }
 
   getTemplate() {
     return createEventTmpl(this._dataEvent);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

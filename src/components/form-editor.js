@@ -1,6 +1,7 @@
 import {TYPE_OF_TRIP_POINT} from '../constants';
 import {CITYES} from '../mock/event';
-import {createElement, formatFullTime} from '../utils';
+import {formatFullTime} from '../utils';
+import AbstractComponent from './abstract-componenet';
 
 const createDestinationPhotoTmpl = (photos) => {
   const imgList = photos.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join(``);
@@ -138,25 +139,13 @@ const createFormEditorTmpl = ({typeOfPoint, city = ``, price = ``, offers, timeF
   );
 };
 
-export default class EventEditor {
+export default class EventEditor extends AbstractComponent {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
     return createFormEditorTmpl(this._event);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
