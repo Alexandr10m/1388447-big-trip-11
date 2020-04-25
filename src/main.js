@@ -3,11 +3,10 @@ import InfoTitlenComponent from "./components/info-route.js";
 import InfoPriceComponent from "./components/info-price.js";
 import MenuComponent from "./components/menu.js";
 import FiltersComponent from "./components/filters.js";
-import SortsComponent from "./components/sorts.js";
-import TripDaysComponent from "./components/trip-days.js";
 import {render, RenderPosition} from "./utils/render.js";
 import {generateEvents} from "./mock/event.js";
-import TripController from "./controllers/trip-days.js";
+import TripEventsController from "./controllers/trip-events.js";
+
 
 const EVENT_COUNT = 20;
 
@@ -24,24 +23,15 @@ const renderControls = () => {
   render(tripControlsElemnt, new FiltersComponent());
 };
 
-const renderSorts = () => {
-  render(tripEventsElement, new SortsComponent());
-};
-
-const renderTripEvents = (allEvents) =>{
-  const tripDaysComponent = new TripDaysComponent();
-  const tripDaysController = new TripController(tripDaysComponent);
-  tripDaysController.render(allEvents);
+const renderTripEvents = (allEvents) => {
+  const tripEventsController = new TripEventsController(tripEventsElement);
+  tripEventsController.render(allEvents);
 };
 
 const events = generateEvents(EVENT_COUNT);
 const tripMainElement = document.querySelector(`.trip-main`);
+const tripEventsElement = document.querySelector(`.trip-events`);
 
 renderTripInfo();
 renderControls();
-
-const tripEventsElement = document.querySelector(`.trip-events`);
-
-events.sort((prevEvent, nextEvent) => prevEvent.timeFrame.start.getTime() - nextEvent.timeFrame.start.getTime());
-renderSorts();
 renderTripEvents(events);
