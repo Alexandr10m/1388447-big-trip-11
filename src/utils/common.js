@@ -31,13 +31,12 @@ const formatDiffenceTime = (date) => {
 };
 
 const groupingEventsInOrderForDays = (events) => {
-  const sortedByDate = events.slice().sort((prevEvent, nextEvent) => prevEvent.timeFrame.start.getTime() - nextEvent.timeFrame.start.getTime());
   const groupedEventsByDays = [[]];
-  const dateOfFirstDay = sortedByDate[0].timeFrame.start.getDate();
+  const dateOfFirstDay = events[0].timeFrame.start.getDate();
   let day = 0;
   let dateOfNewDay = dateOfFirstDay;
 
-  sortedByDate.forEach((event) => {
+  events.forEach((event) => {
     if (dateOfNewDay === event.timeFrame.start.getDate()) {
       groupedEventsByDays[day].push(event);
     } else {

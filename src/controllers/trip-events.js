@@ -19,12 +19,11 @@ const getSortedEvents = (events, sortType = SortType.EVENT) => {
       });
       break;
     case SortType.PRICE:
-      sortedEvents = showingEvents.sort((prev, next) => {
-        return next.price - prev.price;
-      });
+      sortedEvents = showingEvents.sort((prev, next) => next.price - prev.price);
       break;
     case SortType.EVENT:
-      sortedEvents = groupingEventsInOrderForDays(showingEvents);
+      const sortedByDate = showingEvents.sort((prevEvent, nextEvent) => prevEvent.timeFrame.start.getTime() - nextEvent.timeFrame.start.getTime());
+      sortedEvents = groupingEventsInOrderForDays(sortedByDate);
   }
   return sortedEvents;
 };
