@@ -2,19 +2,11 @@ import {MONTH_NAMES} from "../constants.js";
 import AbstractComponent from "./abstract-componenet.js";
 
 
-const createDayTmpl = (events, index, sortType) => {
-  // sortType тут лишний
-  let dateOfDay = ``;
-  let month = ``;
-  let dayNumber = ``;
-  let monthName = ``;
-  // мне кажется if тут лишний
-  if (sortType === `data-event`) {
-    dateOfDay = events[0].timeFrame.start.getDate();
-    month = events[0].timeFrame.start.getMonth();
-    dayNumber = index;
-    monthName = MONTH_NAMES[month];
-  }
+const createDayTmpl = (events, index, isGroupedByDay) => {
+  const dateOfDay = isGroupedByDay ? events[0].timeFrame.start.getDate() : ``;
+  const month = isGroupedByDay ? events[0].timeFrame.start.getMonth() : ``;
+  const dayNumber = isGroupedByDay ? index : ``;
+  const monthName = isGroupedByDay ? MONTH_NAMES[month] : ``;
 
   return (
     `<li class="trip-days__item  day">
@@ -29,14 +21,14 @@ const createDayTmpl = (events, index, sortType) => {
 };
 
 export default class TripDay extends AbstractComponent {
-  constructor(events, dayNumber, sortType) {
+  constructor(events, dayNumber, isGroupedByDay) {
     super();
     this._events = events;
     this._dayNumber = dayNumber;
-    this._sortType = sortType;
+    this._isGroupedByDay = isGroupedByDay;
   }
 
   getTemplate() {
-    return createDayTmpl(this._events, this._dayNumber, this._sortType);
+    return createDayTmpl(this._events, this._dayNumber, this._isGroupedByDay);
   }
 }
