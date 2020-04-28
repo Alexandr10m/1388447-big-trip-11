@@ -25,4 +25,11 @@ const MONTH_NAMES = [
   `NOV`,
   `DEC`,
 ];
-export {TYPE_OF_TRIP_POINT, MONTH_NAMES};
+
+const SORT_OPTION = [
+  `Event`,
+  `Time`,
+  `Price`
+];
+
+export {TYPE_OF_TRIP_POINT, MONTH_NAMES, SORT_OPTION};

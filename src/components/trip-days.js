@@ -10,6 +10,6 @@ const createTripDaysTmpl = () => {
 
 export default class TripDays extends AbstractComponent {
   getTemplate() {
-    return createTripDaysTmpl(this._events);
+    return createTripDaysTmpl();
   }
 }
