@@ -7,7 +7,7 @@ import {render, replace} from "../utils/render.js";
 import SortsComponent, {SortType} from "../components/sorts.js";
 import TripDaysComponent from "../components/trip-days.js";
 
-const getSortedEvents = (events, sortType = SortType.EVENT) => {
+const getSortedEvents = (events, sortType) => {
   let sortedEvents = [];
   const showingEvents = events.slice();
   switch (sortType) {
@@ -75,7 +75,7 @@ const renderDay = (events, dayNumber, tripDaysList, isGroupedByDay = true) => {
   render(tripDaysList, newDayComponent);
 };
 
-const renderDays = (allEvents, tripDayComponent, sortType) => {
+const renderDays = (allEvents, tripDayComponent, sortType = SortType.EVENT) => {
   const sortedEvents = getSortedEvents(allEvents, sortType);
   const isGroupedByDay = sortType === SortType.EVENT;
   const showingEvents = isGroupedByDay ? groupingEventsInOrderForDays(sortedEvents) : sortedEvents;
