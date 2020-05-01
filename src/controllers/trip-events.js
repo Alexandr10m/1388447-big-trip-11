@@ -1,11 +1,10 @@
-import EventEditorComponent from "../components/form-editor.js";
 import TripDayComponent from "../components/trip-day.js";
-import EventComponent from "../components/event.js";
 import NoPointsComponent from "../components/no-points.js";
 import {groupingEventsInOrderForDays} from "../utils/common.js";
-import {render, replace} from "../utils/render.js";
+import {render} from "../utils/render.js";
 import SortsComponent, {SortType} from "../components/sorts.js";
 import TripDaysComponent from "../components/trip-days.js";
+import PointController from "./point.js";
 
 const getSortedEvents = (events, sortType) => {
   let sortedEvents = [];
@@ -32,34 +31,9 @@ const getSortedEvents = (events, sortType) => {
 };
 
 const renderEvent = (event, tripEventsList) => {
-  const replaceEventToEditor = () => {
-    replace(eventEditorComponent, eventComponent);
-  };
-  const replaceEditorToEvent = () => {
-    replace(eventComponent, eventEditorComponent);
-  };
-
-  const onEscKeyDown = (evt) => {
-    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-    if (isEscKey) {
-      replaceEditorToEvent();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    }
-  };
-
-  const eventComponent = new EventComponent(event);
-  eventComponent.setEditButtonClickHandler(() => {
-    replaceEventToEditor();
-    document.addEventListener(`keydown`, onEscKeyDown);
-  });
-
-  const eventEditorComponent = new EventEditorComponent(event);
-  eventEditorComponent.setFormSubmitHandler((evt) => {
-    evt.preventDefault();
-    replaceEditorToEvent();
-    document.removeEventListener(`keydown`, onEscKeyDown);
-  });
-  render(tripEventsList, eventComponent);
+  const pointController = new PointController(tripEventsList);
+  pointController.render(event);
+  return pointController;
 };
 
 const renderDay = (events, dayNumber, tripDaysList, isGroupedByDay = true) => {
