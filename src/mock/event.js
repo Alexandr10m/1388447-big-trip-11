@@ -268,7 +268,8 @@ const generateEvent = () => {
         photos: DESTINATION.photos
       },
       price: getRandomIntegerNumber(5, 1000),
-      timeFrame: getRandomTimeFrame()
+      timeFrame: getRandomTimeFrame(),
+      isFavourite: Math.random() > 0.5
     }
   );
 };
