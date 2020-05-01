@@ -50,6 +50,7 @@ const renderDay = (events, dayNumber, tripDaysList, onDataChange, isGroupedByDay
 
   render(tripDaysList, newDayComponent);
 };
+// Не знаю как разгрузить renderDay() чтоб отрисовывались когда надо несколько дней, когда надо одинь день без данных
 
 export default class TripEventsController {
   constructor(container) {
