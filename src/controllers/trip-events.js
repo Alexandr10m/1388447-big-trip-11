@@ -1,10 +1,11 @@
-import TripDayComponent from "../components/trip-day.js";
 import NoPointsComponent from "../components/no-points.js";
+import PointController from "./point.js";
+import SortsComponent, {SortType} from "../components/sorts.js";
+import TripDayComponent from "../components/trip-day.js";
+import TripDaysComponent from "../components/trip-days.js";
 import {groupingEventsInOrderForDays} from "../utils/common.js";
 import {render} from "../utils/render.js";
-import SortsComponent, {SortType} from "../components/sorts.js";
-import TripDaysComponent from "../components/trip-days.js";
-import PointController from "./point.js";
+
 
 const getSortedEvents = (events, sortType) => {
   let sortedEvents = [];
@@ -38,6 +39,7 @@ const renderEvent = (event, tripEventsList) => {
 
 const renderDay = (events, dayNumber, tripDaysList, isGroupedByDay = true) => {
   const newDayComponent = new TripDayComponent(events, dayNumber, isGroupedByDay);
+
   const tripEventsList = newDayComponent.getElement().querySelector(`.trip-events__list`);
 
   if (isGroupedByDay) {
@@ -51,9 +53,12 @@ const renderDay = (events, dayNumber, tripDaysList, isGroupedByDay = true) => {
 
 const renderDays = (allEvents, tripDayComponent, sortType = SortType.EVENT) => {
   const sortedEvents = getSortedEvents(allEvents, sortType);
+
   const isGroupedByDay = sortType === SortType.EVENT;
   const showingEvents = isGroupedByDay ? groupingEventsInOrderForDays(sortedEvents) : sortedEvents;
+
   tripDayComponent.getElement().innerHTML = ``;
+
   const tripDaysList = tripDayComponent.getElement();
   showingEvents.forEach((events, index) => renderDay(events, index + 1, tripDaysList, isGroupedByDay));
 };
