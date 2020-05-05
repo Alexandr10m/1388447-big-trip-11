@@ -1,14 +1,21 @@
 import {formatTime, formatDiffenceTime, firstWordInUpper, isActiveEvent} from "../utils/common.js";
 import AbstractComponent from "./abstract-componenet.js";
 
-const createOfferTmpl = ({title, price}) => {
-  return (
-    `<li class="event__offer">
-      <span class="event__offer-title">${title}</span>
-      &plus;
-      &euro;&nbsp;<span class="event__offer-price">${price}</span>
-    </li>`
-  );
+const DISPLAY_OFFERS = 3;
+const createOfferTmpl = (offers) => {
+  let count = 1;
+  const tmpl = [];
+  for (const offer of offers) {
+    if (count <= DISPLAY_OFFERS) {
+      tmpl.push(`<li class="event__offer">
+        <span class="event__offer-title">${offer.title}</span>
+        &plus;
+        &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
+      </li>`);
+      count++;
+    }
+  }
+  return tmpl.join(``);
 };
 
 const createEventTmpl = ({typeOfPoint, city, price, offers, timeFrame}) => {
@@ -18,7 +25,7 @@ const createEventTmpl = ({typeOfPoint, city, price, offers, timeFrame}) => {
   const durationTime = formatDiffenceTime(timeFrame);
 
   const isOffersShowing = !!offers.length;
-  const offerstMarkup = offers.map((offer) => createOfferTmpl(offer)).join(``);
+  const offerstMarkup = createOfferTmpl(offers);
 
   return `<li class="trip-events__item">
     <div class="event">
