@@ -48,4 +48,15 @@ const groupingEventsInOrderForDays = (events) => {
   });
   return groupedEventsByDays;
 };
-export {formatTime, formatDiffenceTime, groupingEventsInOrderForDays, formatFullTime};
+
+const firstWordInUpper = (str) => {
+  const isString = typeof str === `string` || !!str;
+
+  return isString ? str[0].toUpperCase() + str.slice(1) : str;
+
+};
+
+const isActiveEvent = (typeOfPoint) => {
+  return typeOfPoint === `sightseeing` || typeOfPoint === `check-in` || typeOfPoint === `restaurant`;
+};
+export {formatTime, formatDiffenceTime, groupingEventsInOrderForDays, formatFullTime, firstWordInUpper, isActiveEvent};
