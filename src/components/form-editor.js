@@ -1,7 +1,7 @@
 import {TYPE_OF_TRIP_POINT} from "../constants.js";
-import {CITYES} from "../mock/event.js";
-import {formatFullTime} from "../utils/common.js";
-import AbstractComponent from "./abstract-componenet.js";
+import {CITYES, OFFERS, getRandomArrayLength, getRandomArrayItem, DESTINATION} from "../mock/event.js";
+import {formatFullTime, firstWordInUpper, isActiveEvent} from "../utils/common.js";
+import AbstractSmartComponent from "./abstract-smart-component.js";
 
 const createDestinationPhotoTmpl = (photos) => {
   const imgList = photos.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join(``);
@@ -16,8 +16,8 @@ const createListEventTypeTmpl = (eventsTypes, checked) => {
     const isChecked = eventsTypes[index] === checked ? `checked` : ``;
     return (
       `<div class="event__type-item">
-        <input id="event-type-${event.toLowerCase()}-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${event.toLowerCase()}" ${isChecked}>
-        <label class="event__type-label  event__type-label--${event.toLowerCase()}" for="event-type-${event.toLowerCase()}-indexDay">${event}</label>
+        <input id="event-type-${event}-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${event}" ${isChecked}>
+        <label class="event__type-label  event__type-label--${event}" for="event-type-${event}-indexDay">${event}</label>
       </div>`
     );
   });
@@ -52,22 +52,21 @@ const createOffersTmpl = (offers) => {
 
   return offersMarkup;
 };
-const createFormEditorTmpl = (event) => {
-  const {typeOfPoint, city, price, offers, timeFrame, isFavourite, destination: {description: distinationDescription, photos: destinationPhotos}} = event;
+const createFormEditorTmpl = (event, option) => {
+  const {price, timeFrame, isFavourite} = event;
+  const {typeOfPoint, city, offers, destination} = option;
   const index = 1;
   const timeStart = formatFullTime(timeFrame.start);
   const timeEnd = formatFullTime(timeFrame.finish);
   const optionsOfTypeEventMarkup = createListEventTypeTmpl(TYPE_OF_TRIP_POINT, typeOfPoint);
   const optionsOfCityMarkup = createListOfCityesTmpl(CITYES);
-
-  const isActiveEvent = typeOfPoint === `Sightseeing` || typeOfPoint === `Check-in` || typeOfPoint === `Restaurant`;
-  const preposition = isActiveEvent ? `In` : `To`;
+  const preposition = isActiveEvent(typeOfPoint) ? `in` : `to`;
 
   const isOffersShowing = !!offers.length;
   const offersMarkup = isOffersShowing ? createOffersTmpl(offers) : ``;
 
-  const destinationPhotosMarkup = createDestinationPhotoTmpl(destinationPhotos);
-  const isDistinationShowing = !!distinationDescription;
+  const destinationPhotosMarkup = createDestinationPhotoTmpl(destination.photos);
+  const isDistinationShowing = !!destination.description;
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -75,7 +74,7 @@ const createFormEditorTmpl = (event) => {
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-${index}">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/${typeOfPoint.toLowerCase()}.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${typeOfPoint}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${index}" type="checkbox">
 
@@ -85,7 +84,7 @@ const createFormEditorTmpl = (event) => {
         </div>
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-${index}">
-            ${typeOfPoint} ${preposition.toLowerCase()}
+            ${firstWordInUpper(typeOfPoint)} ${preposition}
           </label>
           <input class="event__input  event__input--destination" id="event-destination-${index}" type="text" name="event-destination" value="${city}" list="destination-list-${index}">
           <datalist id="destination-list-${index}">
@@ -99,7 +98,7 @@ const createFormEditorTmpl = (event) => {
           <input class="event__input  event__input--time" id="event-start-time-${index}" type="text" name="event-start-time" value="${timeStart} 00:00">
           &mdash;
           <label class="visually-hidden" for="event-end-time-${index}">
-            ${preposition}
+            ${firstWordInUpper(preposition)}
           </label>
           <input class="event__input  event__input--time" id="event-end-time-${index}" type="text" name="event-end-time" value="${timeEnd} 00:00">
         </div>
@@ -139,7 +138,7 @@ const createFormEditorTmpl = (event) => {
         ${isDistinationShowing ?
       `<section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${distinationDescription}</p>
+          <p class="event__destination-description">${destination.description}</p>
           <div class="event__photos-container">
             <div class="event__photos-tape">
               ${destinationPhotosMarkup}
@@ -151,22 +150,73 @@ const createFormEditorTmpl = (event) => {
   );
 };
 
-export default class EventEditor extends AbstractComponent {
+export default class EventEditor extends AbstractSmartComponent {
   constructor(event) {
     super();
     this._event = event;
+    this._typeOfPoint = event.typeOfPoint;
+    this._city = event.city;
+    this._offers = event.offers;
+    this._destination = event.destination;
+    this._submitHandler = null;
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
-    return createFormEditorTmpl(this._event);
+    return createFormEditorTmpl(this._event, {
+      typeOfPoint: this._typeOfPoint,
+      city: this._city,
+      offers: this._offers,
+      destination: this._destination
+    });
   }
 
   setFormSubmitHandler(handler) {
     this.getElement().addEventListener(`submit`, handler);
+    this._submitHandler = handler;
   }
 
   setFavouritesButtonClickHandler(handler) {
     this.getElement().querySelector(`.event__favorite-btn`)
     .addEventListener(`click`, handler);
+  }
+
+  recoveryListeners() {
+    this.setFormSubmitHandler(this._submitHandler);
+    this._subscribeOnEvents();
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+    const listOfPoint = element.querySelector(`.event__type-list`);
+    const destinationElement = element.querySelector(`.event__input--destination`);
+
+    listOfPoint.addEventListener(`click`, (evt) => {
+      if (evt.target.tagName !== `LABEL`) {
+        return;
+      }
+
+      if (!listOfPoint.contains(evt.target)) {
+        return;
+      }
+
+      const input = evt.target.previousElementSibling;
+      this._typeOfPoint = input.value;
+      this._offers = getRandomArrayLength(OFFERS[getRandomArrayItem(TYPE_OF_TRIP_POINT)]);
+      this.rerender();
+    });
+
+    destinationElement.addEventListener(`change`, (evt) => {
+      if (this._city === evt.target.value || evt.target.value === ``) {
+        return;
+      }
+
+      this._city = evt.target.value;
+      this._destination = {
+        description: `${getRandomArrayLength(DESTINATION.desription, 5).join(` `)}`,
+        photos: DESTINATION.photos
+      };
+      this.rerender();
+    });
   }
 }
