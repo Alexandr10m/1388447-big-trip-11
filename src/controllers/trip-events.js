@@ -37,21 +37,6 @@ const renderEvent = (event, tripEventsList, onDataChange) => {
   return pointController;
 };
 
-const renderDay = (events, dayNumber, tripDaysList, onDataChange, isGroupedByDay = true) => {
-  const newDayComponent = new TripDayComponent(events, dayNumber, isGroupedByDay);
-
-  const tripEventsList = newDayComponent.getElement().querySelector(`.trip-events__list`);
-
-  if (isGroupedByDay) {
-    events.forEach((event) => renderEvent(event, tripEventsList, onDataChange));
-  } else {
-    renderEvent(events, tripEventsList, onDataChange);
-  }
-
-  render(tripDaysList, newDayComponent);
-};
-// Не знаю как разгрузить renderDay() чтоб отрисовывались когда надо несколько дней, когда надо одинь день без данных
-
 export default class TripEventsController {
   constructor(container) {
     this._events = [];
@@ -80,8 +65,30 @@ export default class TripEventsController {
 
     const showingEvents = groupingEventsInOrderForDays(getSortedEvents(this._events));
 
+    this._showedPointControllers = this._renderDay(showingEvents);
+  }
+
+  _renderDay(events) {
+    const isGroupedForDays = events[0].length > 0;
     const tripDaysList = this._tripDaysComponent.getElement();
-    showingEvents.forEach((eventsForDays, index) => renderDay(eventsForDays, index + 1, tripDaysList, this._onDataChange));
+    let eventControllers = [];
+
+    if (isGroupedForDays) {
+      let dayNumber = 1;
+      for (const eventsForDay of events) {
+        const newDayComponent = new TripDayComponent(eventsForDay, dayNumber);
+        const tripEventsList = newDayComponent.getElement().querySelector(`.trip-events__list`);
+        eventControllers = eventControllers.concat(eventsForDay.map((event) => renderEvent(event, tripEventsList, this._onDataChange)));
+        render(tripDaysList, newDayComponent);
+        dayNumber++;
+      }
+    } else {
+      const newDayComponent = new TripDayComponent(events);
+      const tripEventsList = newDayComponent.getElement().querySelector(`.trip-events__list`);
+      eventControllers = events.map((event) => renderEvent(event, tripEventsList, this._onDataChange));
+      render(tripDaysList, newDayComponent);
+    }
+    return eventControllers;
   }
 
   _onDataChange(oldEvent, newEvent) {
@@ -103,7 +110,6 @@ export default class TripEventsController {
 
     this._tripDaysComponent.getElement().innerHTML = ``;
 
-    const tripDaysList = this._tripDaysComponent.getElement();
-    showingEvents.forEach((events, index) => renderDay(events, index + 1, tripDaysList, this._onDataChange, isGroupedByDay));
+    this._showedPointControllers = this._renderDay(showingEvents);
   }
 }
