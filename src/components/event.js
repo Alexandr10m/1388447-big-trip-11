@@ -1,4 +1,4 @@
-import {formatTime, formatDiffenceTime} from "../utils/common.js";
+import {formatTime, formatDiffenceTime, firstWordInUpper, isActiveEvent} from "../utils/common.js";
 import AbstractComponent from "./abstract-componenet.js";
 
 const createOfferTmpl = ({title, price}) => {
@@ -13,8 +13,6 @@ const createOfferTmpl = ({title, price}) => {
 
 const createEventTmpl = ({typeOfPoint, city, price, offers, timeFrame}) => {
 
-  const isActiveEvent = typeOfPoint === `Sightseeing` || typeOfPoint === `Check-in` || typeOfPoint === `Restaurant`;
-
   const startTimeOfEvent = formatTime(timeFrame.start);
   const finishTimeOfEvent = formatTime(timeFrame.finish);
   const durationTime = formatDiffenceTime(timeFrame);
@@ -27,7 +25,7 @@ const createEventTmpl = ({typeOfPoint, city, price, offers, timeFrame}) => {
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${typeOfPoint}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${typeOfPoint} ${isActiveEvent ? `in` : `to`} ${city}</h3>
+      <h3 class="event__title">${firstWordInUpper(typeOfPoint)} ${isActiveEvent(typeOfPoint) ? `in` : `to`} ${city}</h3>
 
       <div class="event__schedule">
         <p class="event__time">
