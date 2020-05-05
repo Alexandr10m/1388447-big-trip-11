@@ -159,6 +159,7 @@ export default class EventEditor extends AbstractSmartComponent {
     this._offers = event.offers;
     this._destination = event.destination;
     this._submitHandler = null;
+    this._favouriteHandler = null;
     this._subscribeOnEvents();
   }
 
@@ -179,10 +180,21 @@ export default class EventEditor extends AbstractSmartComponent {
   setFavouritesButtonClickHandler(handler) {
     this.getElement().querySelector(`.event__favorite-btn`)
     .addEventListener(`click`, handler);
+    this._favouriteHandler = handler;
+  }
+
+  reset() {
+    this._typeOfPoint = this._event.typeOfPoint;
+    this._city = this._event.city;
+    this._offers = this._event.offers;
+    this._destination = this._event.destination;
+
+    this.rerender();
   }
 
   recoveryListeners() {
     this.setFormSubmitHandler(this._submitHandler);
+    this.setFavouritesButtonClickHandler(this._favouriteHandler);
     this._subscribeOnEvents();
   }
 
@@ -213,7 +225,7 @@ export default class EventEditor extends AbstractSmartComponent {
 
       this._city = evt.target.value;
       this._destination = {
-        description: `${getRandomArrayLength(DESTINATION.desription, 5).join(` `)}`,
+        description: getRandomArrayLength(DESTINATION.desription, 5),
         photos: DESTINATION.photos
       };
       this.rerender();
