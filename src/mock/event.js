@@ -7,7 +7,7 @@ const CITYES = [
   `Roma`
 ];
 const OFFERS = {
-  "Taxi": [{
+  "taxi": [{
     name: `luggage`,
     title: `Add luggage`,
     price: 30
@@ -28,7 +28,7 @@ const OFFERS = {
     title: `Travel by train`,
     price: 40
   }],
-  "Bus": [{
+  "bus": [{
     name: `luggage`,
     title: `Add luggage`,
     price: 30
@@ -49,7 +49,7 @@ const OFFERS = {
     title: `Travel by train`,
     price: 40
   }],
-  "Train": [{
+  "train": [{
     name: `luggage`,
     title: `Add luggage`,
     price: 30
@@ -70,7 +70,7 @@ const OFFERS = {
     title: `Travel by train`,
     price: 40
   }],
-  "Ship": [{
+  "ship": [{
     name: `luggage`,
     title: `Add luggage`,
     price: 30
@@ -91,7 +91,7 @@ const OFFERS = {
     title: `Travel by train`,
     price: 40
   }],
-  "Transport": [{
+  "transport": [{
     name: `luggage`,
     title: `Add luggage`,
     price: 30
@@ -112,7 +112,7 @@ const OFFERS = {
     title: `Travel by train`,
     price: 40
   }],
-  "Drive": [{
+  "drive": [{
     name: `luggage`,
     title: `Add luggage`,
     price: 30
@@ -133,7 +133,7 @@ const OFFERS = {
     title: `Travel by train`,
     price: 40
   }],
-  "Flight": [{
+  "flight": [{
     name: `luggage`,
     title: `Add luggage`,
     price: 30
@@ -154,7 +154,7 @@ const OFFERS = {
     title: `Travel by train`,
     price: 40
   }],
-  "Check-in": [{
+  "check-in": [{
     name: `luggage`,
     title: `Add luggage`,
     price: 30
@@ -175,7 +175,7 @@ const OFFERS = {
     title: `Travel by train`,
     price: 40
   }],
-  "Sightseeing": [{
+  "sightseeing": [{
     name: `luggage`,
     title: `Add luggage`,
     price: 30
@@ -196,7 +196,7 @@ const OFFERS = {
     title: `Travel by train`,
     price: 40
   }],
-  "Restaurant": [{
+  "restaurant": [{
     name: `luggage`,
     title: `Add luggage`,
     price: 30
@@ -255,20 +255,19 @@ const getRandomTimeFrame = () => {
     finish: finishDate
   };
 };
-
 const generateEvent = () => {
-  const randomTypeOfPointer = getRandomArrayItem(TYPE_OF_TRIP_POINT);
   return (
     {
-      typeOfPoint: randomTypeOfPointer,
+      typeOfPoint: getRandomArrayItem(TYPE_OF_TRIP_POINT),
       city: getRandomArrayItem(CITYES),
-      offers: getRandomArrayLength(OFFERS[randomTypeOfPointer]),
+      offers: getRandomArrayLength(OFFERS[getRandomArrayItem(TYPE_OF_TRIP_POINT)]),
       destination: {
         description: `${getRandomArrayLength(DESTINATION.desription, 5).join(` `)}`,
-        photos: DESTINATION.photos
+        photos: DESTINATION.photos,
       },
       price: getRandomIntegerNumber(5, 1000),
-      timeFrame: getRandomTimeFrame()
+      timeFrame: getRandomTimeFrame(),
+      isFavourite: Math.random() > 0.5
     }
   );
 };
@@ -281,4 +280,4 @@ const generateEvents = (number) => {
   return events;
 };
 
-export {generateEvents, CITYES, OFFERS, DESTINATION};
+export {generateEvents, CITYES, OFFERS, DESTINATION, getRandomArrayLength, getRandomArrayItem};
