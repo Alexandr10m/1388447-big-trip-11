@@ -1,31 +1,25 @@
-const castTimeFormat = (value) => {
-  return value < 10 ? `0${value}` : String(value);
-};
+import moment from "moment";
+
 
 const formatTime = (date) => {
-  const hours = castTimeFormat(date.getHours());
-  const minutes = castTimeFormat(date.getMinutes());
-
-  return `${hours}:${minutes}`;
+  return moment(date).format(`hh:mm`);
 };
 
 const formatFullTime = (date) => {
-  const dateOfDay = castTimeFormat(date.getDate());
-  const hours = castTimeFormat(date.getHours());
-  const minutes = castTimeFormat(date.getMinutes());
-  return `${dateOfDay}/${hours}/${minutes}`;
+  return moment(date).format(`DD/ММ/YYYY hh:mm`);
 };
 
 const formatDiffenceTime = (date) => {
-  const diffDays = date.finish.getDate() - date.start.getDate();
-  const diffHours = date.finish.getHours() - date.start.getHours();
-  const diffMinutes = date.finish.getMinutes() - date.start.getMinutes();
+  const finish = moment(date.finish);
+  const days = finish.diff(date.start, `days`);
+  const hours = finish.diff(date.start, `hours`) % 24;
+  const minutes = finish.diff(date.start, `minutes`) % 60;
 
   let massege = ``;
 
-  massege += diffDays ? `${diffDays}D ` : ``;
-  massege += diffHours ? `${diffHours}H ` : ``;
-  massege += diffMinutes ? `${diffMinutes}M` : ``;
+  massege += days ? `${days}D ` : ``;
+  massege += hours ? `${hours}H ` : ``;
+  massege += minutes ? `${minutes}M` : ``;
 
   return massege;
 };
