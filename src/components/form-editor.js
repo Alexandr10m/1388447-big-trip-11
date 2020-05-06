@@ -2,6 +2,8 @@ import {TYPE_OF_TRIP_POINT} from "../constants.js";
 import {CITYES, OFFERS, getRandomArrayLength, getRandomArrayItem, DESTINATION} from "../mock/event.js";
 import {formatFullTime, firstWordInUpper, isActiveEvent} from "../utils/common.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
 
 const createDestinationPhotoTmpl = (photos) => {
   const imgList = photos.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join(``);
@@ -158,8 +160,11 @@ export default class EventEditor extends AbstractSmartComponent {
     this._city = event.city;
     this._offers = event.offers;
     this._destination = event.destination;
+    this._flatpickrs = [];
     this._submitHandler = null;
     this._favouriteHandler = null;
+
+    this._applyFlatpickr();
     this._subscribeOnEvents();
   }
 
@@ -181,6 +186,36 @@ export default class EventEditor extends AbstractSmartComponent {
     this.getElement().querySelector(`.event__favorite-btn`)
     .addEventListener(`click`, handler);
     this._favouriteHandler = handler;
+  }
+
+  rerender() {
+    super.rerender();
+    this._applyFlatpickr();
+  }
+
+  _applyFlatpickr() {
+    if (this._flatpickrs.length) {
+      this._flatpickrs.forEach((it) => it.destroy());
+      this._flatpickrs = [];
+    }
+
+    if (this._typeOfPoint) {
+      const startDateElement = this.getElement().querySelector(`#event-start-time-1`);
+      const startTime = flatpickr(startDateElement, {
+        dateFormat: `d/m/y/ H:i`,
+        allowInput: true,
+        defaultDate: this._event.timeFrame.start || `01/01/2020 00:00`
+      });
+      this._flatpickrs.push(startTime);
+
+      const endDateElement = this.getElement().querySelector(`#event-end-time-1`);
+      const endTime = flatpickr(endDateElement, {
+        dateFormat: `d/m/y/ H:i`,
+        allowInput: true,
+        defaultDate: this._event.timeFrame.start || `01/01/2020 00:00`
+      });
+      this._flatpickrs.push(endTime);
+    }
   }
 
   reset() {
