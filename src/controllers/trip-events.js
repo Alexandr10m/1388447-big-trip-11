@@ -4,7 +4,7 @@ import SortsComponent, {SortType} from "../components/sorts.js";
 import TripDayComponent from "../components/trip-day.js";
 import TripDaysComponent from "../components/trip-days.js";
 import {groupingEventsInOrderForDays} from "../utils/common.js";
-import {render} from "../utils/render.js";
+import {render, remove} from "../utils/render.js";
 
 
 const getSortedEvents = (events, sortType = SortType.EVENT) => {
@@ -42,13 +42,17 @@ export default class TripEventsController {
     this._eventsModel = eventsModel;
     this._showedPointControllers = [];
     this._container = container;
-    this._sortsComponent = new SortsComponent();
-    this._tripDaysComponent = new TripDaysComponent();
-    this._noPointsComponent = new NoPointsComponent();
+    this._sortsComponent = null;
+    this._tripDaysComponent = null;
+    this._noPointsComponent = null;
+
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
+
+    this._onFilterChange = this._onFilterChange.bind(this);
+    this._eventsModel.setFilterChangeHandler(this._onFilterChange);
+
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
-    this._sortsComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
 
   render() {
@@ -57,24 +61,35 @@ export default class TripEventsController {
     const isNoEvents = events.length === 0;
 
     if (isNoEvents) {
+      this._noPointsComponent = new NoPointsComponent();
       render(this._container, this._noPointsComponent);
       return;
     }
 
+    if (this._noPointsComponent) {
+      remove(this._noPointsComponent);
+      this._noPointsComponent = null;
+    }
+
+    this._tripDaysComponent = new TripDaysComponent();
+    this._sortsComponent = new SortsComponent();
+
     render(this._container, this._sortsComponent);
+    this._sortsComponent.setSortTypeChangeHandler(this._onSortTypeChange);
     render(this._container, this._tripDaysComponent);
 
     const showingEvents = groupingEventsInOrderForDays(getSortedEvents(events));
 
     this._showedPointControllers = this._renderDay(showingEvents);
+    // переписать mock/events-date
   }
 
-  _renderDay(events) {
-    const isGroupedForDays = events[0].length > 0;
+  _renderDay(events, isGroupedByDay = true) {
     const tripDaysList = this._tripDaysComponent.getElement();
+    tripDaysList.innerHTML = ``;
     let eventControllers = [];
 
-    if (isGroupedForDays) {
+    if (isGroupedByDay) {
       let dayNumber = 1;
       for (const eventsForDay of events) {
         const newDayComponent = new TripDayComponent(eventsForDay, dayNumber);
@@ -104,13 +119,32 @@ export default class TripEventsController {
   }
 
   _onSortTypeChange(sortType) {
+    this._removeEvents();
     const sortedEvents = getSortedEvents(this._eventsModel.getEvents(), sortType);
 
     const isGroupedByDay = sortType === SortType.EVENT;
     const showingEvents = isGroupedByDay ? groupingEventsInOrderForDays(sortedEvents) : sortedEvents;
 
-    this._tripDaysComponent.getElement().innerHTML = ``;
+    this._showedPointControllers = this._renderDay(showingEvents, isGroupedByDay);
+  }
 
-    this._showedPointControllers = this._renderDay(showingEvents);
+  _removeEvents() {
+    this._showedPointControllers.forEach((controller) => controller.destroy());
+    this._showedPointControllers = [];
+  }
+
+  _remove() {
+    remove(this._sortsComponent);
+    remove(this._tripDaysComponent);
+    this._removeEvents();
+  }
+
+  _upDateEvent() {
+    this._remove();
+    this.render();
+  }
+
+  _onFilterChange() {
+    this._upDateEvent();
   }
 }

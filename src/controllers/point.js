@@ -76,5 +76,6 @@ export default class PointController {
   destroy() {
     remove(this._eventComponent);
     remove(this._eventEditorComponent);
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 }
