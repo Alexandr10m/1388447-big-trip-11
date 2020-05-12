@@ -32,4 +32,9 @@ const SORT_OPTION = [
   `Price`
 ];
 
-export {TYPE_OF_TRIP_POINT, MONTH_NAMES, SORT_OPTION};
+const FilterType = {
+  EVERYTHING: `everything`,
+  FUTURE: `future`,
+  PAST: `past`
+};
+export {TYPE_OF_TRIP_POINT, MONTH_NAMES, SORT_OPTION, FilterType};
