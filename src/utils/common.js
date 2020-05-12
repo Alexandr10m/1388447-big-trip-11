@@ -53,4 +53,24 @@ const firstWordInUpper = (str) => {
 const isActiveEvent = (typeOfPoint) => {
   return typeOfPoint === `sightseeing` || typeOfPoint === `check-in` || typeOfPoint === `restaurant`;
 };
-export {formatTime, formatDiffenceTime, groupingEventsInOrderForDays, formatFullTime, firstWordInUpper, isActiveEvent};
+
+const isOneDay = (dateA, dateB) => {
+  const a = moment(dateA);
+  const b = moment(dateB);
+  return a.diff(b, `days`) === 0 && dateA.getDate() === dateB.getDate();
+};
+
+
+const isRepeating = (repeatingDays) => {
+  return Object.values(repeatingDays).some(Boolean);
+};
+
+const isOverdueDate = (dueDate, date) => {
+  return dueDate < date && !isOneDay(date, dueDate);
+};
+
+const isUnderdueDate = (dueDate, date) => {
+  return dueDate > date && !isOneDay(date, dueDate);
+};
+
+export {isUnderdueDate, isOverdueDate, isRepeating, isOneDay, formatTime, formatDiffenceTime, groupingEventsInOrderForDays, formatFullTime, firstWordInUpper, isActiveEvent};
