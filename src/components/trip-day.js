@@ -2,7 +2,7 @@ import {MONTH_NAMES} from "../constants.js";
 import AbstractComponent from "./abstract-componenet.js";
 
 
-const createDayTmpl = (events, dayNumber) => {
+const createDayTmpl = (events, dayNumber = false) => {
   const isGroupedByDay = !!dayNumber;
   const dateOfDay = isGroupedByDay ? events[0].timeFrame.start.getDate() : ``;
   const month = isGroupedByDay ? events[0].timeFrame.start.getMonth() : ``;
