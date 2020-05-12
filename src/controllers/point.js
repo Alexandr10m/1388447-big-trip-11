@@ -1,6 +1,6 @@
 import EventComponent from "../components/event.js";
 import EventEditorComponent from "../components/form-editor.js";
-import {render, replace} from "../utils/render.js";
+import {render, replace, remove} from "../utils/render.js";
 
 const Modes = {
   DEFAULT: `default`,
@@ -71,5 +71,10 @@ export default class PointController {
     if (isEscKey) {
       this._replaceEditorToEvent();
     }
+  }
+
+  destroy() {
+    remove(this._eventComponent);
+    remove(this._eventEditorComponent);
   }
 }
