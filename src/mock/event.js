@@ -258,6 +258,7 @@ const getRandomTimeFrame = () => {
 const generateEvent = () => {
   return (
     {
+      id: String(new Date() + Math.random()),
       typeOfPoint: getRandomArrayItem(TYPE_OF_TRIP_POINT),
       city: getRandomArrayItem(CITYES),
       offers: getRandomArrayLength(OFFERS[getRandomArrayItem(TYPE_OF_TRIP_POINT)]),
