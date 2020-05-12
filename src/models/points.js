@@ -19,12 +19,12 @@ export default class Points {
 
   setEvents(events) {
     this._events = Array.from(events);
-    this._callHandler(this._dataChangeHandlers);
+    this._callHandlers(this._dataChangeHandlers);
   }
 
   setFilter(filterType) {
     this._currentFilter = filterType;
-    this._callHandler(this._filterChangeHandlers);
+    this._callHandlers(this._filterChangeHandlers);
   }
 
   upDateEvent(id, changedEvent) {
@@ -33,7 +33,7 @@ export default class Points {
       return false;
     }
     this._events = [].concat(this._events.slice(0, index), changedEvent, this._events.slice(index + 1));
-    this._callHandler(this._dataChangeHandlers);
+    this._callHandlers(this._dataChangeHandlers);
     return true;
   }
 
@@ -45,7 +45,7 @@ export default class Points {
     this._filterChangeHandlers.push(handler);
   }
 
-  _callHandler(handlers) {
+  _callHandlers(handlers) {
     handlers.forEach((handler) => handler());
   }
 }

@@ -2,7 +2,6 @@ import TripInfoComponent from "./components/trip-info.js";
 import InfoTitlenComponent from "./components/info-route.js";
 import InfoPriceComponent from "./components/info-price.js";
 import MenuComponent from "./components/menu.js";
-// import FiltersComponent from "./components/filters.js";
 import FilterController from "./controllers/filter.js";
 import {render, RenderPosition} from "./utils/render.js";
 import {generateEvents} from "./mock/event.js";
