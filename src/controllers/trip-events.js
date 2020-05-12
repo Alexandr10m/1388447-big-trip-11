@@ -93,7 +93,7 @@ export default class TripEventsController {
   }
 
   _onDataChange(controller, oldData, newData) {
-    const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
+    const isSuccess = this._eventsModel.upDateEvent(oldData.id, newData);
     if (isSuccess) {
       controller.render(newData);
     }
