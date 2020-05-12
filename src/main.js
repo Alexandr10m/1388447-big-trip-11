@@ -5,6 +5,7 @@ import MenuComponent from "./components/menu.js";
 import FiltersComponent from "./components/filters.js";
 import {render, RenderPosition} from "./utils/render.js";
 import {generateEvents} from "./mock/event.js";
+import Points from "./models/points";
 import TripEventsController from "./controllers/trip-events.js";
 
 
@@ -23,15 +24,18 @@ const renderControls = () => {
   render(tripControlsElemnt, new FiltersComponent());
 };
 
-const renderTripEvents = (allEvents) => {
-  const tripEventsController = new TripEventsController(tripEventsElement);
-  tripEventsController.render(allEvents);
+const renderTripEvents = (model) => {
+  const tripEventsController = new TripEventsController(tripEventsElement, model);
+  tripEventsController.render();
 };
 
 const events = generateEvents(EVENT_COUNT);
+const eventsModel = new Points();
+eventsModel.setEvents(events);
+
 const tripMainElement = document.querySelector(`.trip-main`);
 const tripEventsElement = document.querySelector(`.trip-events`);
 
 renderTripInfo();
 renderControls();
-renderTripEvents(events);
+renderTripEvents(eventsModel);

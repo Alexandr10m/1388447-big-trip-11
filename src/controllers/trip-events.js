@@ -38,8 +38,8 @@ const renderEvent = (event, tripEventsList, onDataChange, onViewChange) => {
 };
 
 export default class TripEventsController {
-  constructor(container) {
-    this._events = [];
+  constructor(container, eventsModel) {
+    this._eventsModel = eventsModel;
     this._showedPointControllers = [];
     this._container = container;
     this._sortsComponent = new SortsComponent();
@@ -51,8 +51,8 @@ export default class TripEventsController {
     this._sortsComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
 
-  render(events) {
-    this._events = events;
+  render() {
+    const events = this._eventsModel.getEvents();
 
     const isNoEvents = events.length === 0;
 
@@ -64,7 +64,7 @@ export default class TripEventsController {
     render(this._container, this._sortsComponent);
     render(this._container, this._tripDaysComponent);
 
-    const showingEvents = groupingEventsInOrderForDays(getSortedEvents(this._events));
+    const showingEvents = groupingEventsInOrderForDays(getSortedEvents(events));
 
     this._showedPointControllers = this._renderDay(showingEvents);
   }
@@ -93,13 +93,10 @@ export default class TripEventsController {
   }
 
   _onDataChange(controller, oldData, newData) {
-    const index = this._events.findIndex((it) => it === oldData);
-    if (index === -1) {
-      return;
+    const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
+    if (isSuccess) {
+      controller.render(newData);
     }
-
-    this._events = [].concat(this._events.slice(0, index), newData, this._events.slice(index + 1));
-    controller.render(this._events[index]);
   }
 
   _onViewChange() {
@@ -107,7 +104,7 @@ export default class TripEventsController {
   }
 
   _onSortTypeChange(sortType) {
-    const sortedEvents = getSortedEvents(this._events, sortType);
+    const sortedEvents = getSortedEvents(this._eventsModel.getEvents(), sortType);
 
     const isGroupedByDay = sortType === SortType.EVENT;
     const showingEvents = isGroupedByDay ? groupingEventsInOrderForDays(sortedEvents) : sortedEvents;
