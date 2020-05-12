@@ -10,17 +10,22 @@ export default class Points {
   }
 
   setEvents(events) {
-    this._events = events;
+    this._events = Array.from(events);
     this._callHandler(this._dataChangeHandlers);
   }
 
   upDateEvent(id, changedEvent) {
     const index = this._events.findIndex((event) => event.id === id);
     if (index === -1) {
-      return;
+      return false;
     }
     this._events = [].concat(this._events.slice(0, index), changedEvent, this._events.slice(index + 1));
     this._callHandler(this._dataChangeHandlers);
+    return true;
+  }
+
+  setDataChangeHandler(handler) {
+    this._dataChangeHandlers.push(handler);
   }
 
   _callHandler(handlers) {
