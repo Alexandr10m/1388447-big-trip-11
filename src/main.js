@@ -2,7 +2,8 @@ import TripInfoComponent from "./components/trip-info.js";
 import InfoTitlenComponent from "./components/info-route.js";
 import InfoPriceComponent from "./components/info-price.js";
 import MenuComponent from "./components/menu.js";
-import FiltersComponent from "./components/filters.js";
+// import FiltersComponent from "./components/filters.js";
+import FilterController from "./controllers/filter.js";
 import {render, RenderPosition} from "./utils/render.js";
 import {generateEvents} from "./mock/event.js";
 import Points from "./models/points";
@@ -18,10 +19,11 @@ const renderTripInfo = () => {
   render(tripInfoContainer.getElement(), new InfoPriceComponent());
 };
 
-const renderControls = () => {
+const renderControls = (model) => {
   const tripControlsElemnt = tripMainElement.querySelector(`.trip-main__trip-controls`);
   render(tripControlsElemnt.children[0], new MenuComponent(), RenderPosition.AFTEREND);
-  render(tripControlsElemnt, new FiltersComponent());
+  const filterController = new FilterController(tripControlsElemnt, model);
+  filterController.render();
 };
 
 const renderTripEvents = (model) => {
@@ -37,5 +39,5 @@ const tripMainElement = document.querySelector(`.trip-main`);
 const tripEventsElement = document.querySelector(`.trip-events`);
 
 renderTripInfo();
-renderControls();
+renderControls(eventsModel);
 renderTripEvents(eventsModel);
