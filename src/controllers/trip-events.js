@@ -81,7 +81,6 @@ export default class TripEventsController {
     const showingEvents = groupingEventsInOrderForDays(getSortedEvents(events));
 
     this._showedPointControllers = this._renderDay(showingEvents);
-    // переписать mock/events-date
   }
 
   _renderDay(events, isGroupedByDay = true) {
@@ -133,14 +132,14 @@ export default class TripEventsController {
     this._showedPointControllers = [];
   }
 
-  _remove() {
+  _removeDayList() {
     remove(this._sortsComponent);
     remove(this._tripDaysComponent);
     this._removeEvents();
   }
 
   _upDateEvent() {
-    this._remove();
+    this._removeDayList();
     this.render();
   }
 

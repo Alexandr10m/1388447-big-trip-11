@@ -35,6 +35,7 @@ export default class PointController {
       this._replaceEditorToEvent();
       document.removeEventListener(`keydown`, this._onEscKeyDown);
     });
+
     this._eventEditorComponent.setFavouritesButtonClickHandler(() => {
       this._onDataChange(this, event, Object.assign({}, event, {isFavourite: !event.isFavourite}));
     });
