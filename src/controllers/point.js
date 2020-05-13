@@ -5,7 +5,10 @@ import {render, replace, remove} from "../utils/render.js";
 const Modes = {
   DEFAULT: `default`,
   EDIT: `edit`,
+  ADDING: `adding`
 };
+
+const EmptyEvent = {};
 
 export default class PointController {
   constructor(container, onDataChange, onViewChange) {
@@ -80,3 +83,5 @@ export default class PointController {
     document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 }
+
+export {Modes, EmptyEvent};
