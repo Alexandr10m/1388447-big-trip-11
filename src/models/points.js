@@ -27,6 +27,23 @@ export default class Points {
     this._callHandlers(this._filterChangeHandlers);
   }
 
+  removeEvent(id) {
+    const index = this._events.findIndex((event) => event.id === id);
+    if (!index) {
+      return false;
+    }
+
+    this._events = [].concat(this._events.slice(0, index), this._events.slice(index + 1));
+    this._callHandlers(this._dataChangeHandlers);
+
+    return true;
+  }
+
+  addEvent(event) {
+    this._events = [].concat(event, this._events);
+    this._callHandlers(this._dataChangeHandlers());
+  }
+
   upDateEvent(id, changedEvent) {
     const index = this._events.findIndex((event) => event.id === id);
     if (index === -1) {
