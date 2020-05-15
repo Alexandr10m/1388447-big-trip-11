@@ -6,7 +6,7 @@ const formatTime = (date) => {
 };
 
 const formatFullTime = (date) => {
-  return moment(date).format(`DD/ММ/YYYY hh:mm`);
+  return moment(date).format(`DD/MM/YYYY hh:mm`);
 };
 
 const formatDiffenceTime = (date) => {
@@ -73,4 +73,48 @@ const isUnderdueDate = (dueDate, date) => {
   return dueDate > date && !isOneDay(date, dueDate);
 };
 
-export {isUnderdueDate, isOverdueDate, isRepeating, isOneDay, formatTime, formatDiffenceTime, groupingEventsInOrderForDays, formatFullTime, firstWordInUpper, isActiveEvent};
+const sortedEventsByTime = (events) => {
+  if (events.length === 0) {
+    return false;
+  }
+  return events.sort((prev, next) => {
+    return prev.timeFrame.start.getTime() - next.timeFrame.start.getTime();
+  });
+};
+
+const getTripInfo = (events) => {
+  const sortedEvents = sortedEventsByTime(events.slice());
+
+  if (!sortedEvents) {
+    return false;
+  }
+
+  let intermediatePoint = false;
+  let dateEnd = false;
+  let price = 0;
+
+  if (sortedEvents.length === 1) {
+    dateEnd = sortedEvents[0].timeFrame.finish;
+  }
+  if (sortedEvents.length > 3) {
+    intermediatePoint = `...`;
+  }
+  if (sortedEvents.length === 3) {
+    intermediatePoint = sortedEvents[1].city;
+  }
+
+  sortedEvents.forEach((it) => {
+    price = price + it.price;
+  });
+
+  return {
+    startPoint: sortedEvents.length ? sortedEvents[0].city : false,
+    intermediatePoint,
+    endPoint: sortedEvents.length > 1 ? sortedEvents[sortedEvents.length - 1].city : false,
+    dateStart: sortedEvents.length ? sortedEvents[0].timeFrame.start : false,
+    dateEnd: sortedEvents.length > 1 ? sortedEvents[sortedEvents.length - 1].timeFrame.finish : dateEnd,
+    price,
+  };
+};
+
+export {getTripInfo, isUnderdueDate, isOverdueDate, isRepeating, isOneDay, formatTime, formatDiffenceTime, groupingEventsInOrderForDays, formatFullTime, firstWordInUpper, isActiveEvent};
