@@ -1,16 +1,14 @@
 import FiltersComponent from "../components/filters.js";
 import {FilterType} from "../constants.js";
-import {render, replace} from "../utils/render.js";
+import {render, replace, remove} from "../utils/render.js";
 
 export default class Filter {
-  constructor(container, eventsModel) {
+  constructor(container, onFilterChange) {
     this._container = container;
-    this._eventsModel = eventsModel;
+    this._setFilterChangeinController = onFilterChange;
     this._filterComponent = null;
     this._currentFilter = FilterType.EVERYTHING;
-    this._onDataChange = this._onDataChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
-    this._eventsModel.setDataChangeHandler(this._onDataChange);
   }
 
   render() {
@@ -33,12 +31,17 @@ export default class Filter {
     }
   }
 
-  _onDataChange() {
+  reset() {
+    this._onFilterChange(FilterType.EVERYTHING);
     this.render();
   }
 
   _onFilterChange(filterType) {
     this._currentFilter = filterType;
-    this._eventsModel.setFilter(this._currentFilter);
+    this._setFilterChangeinController(filterType);
+  }
+
+  destroy() {
+    remove(this._filterComponent);
   }
 }
