@@ -1,5 +1,5 @@
 import NoPointsComponent from "../components/no-points.js";
-import PointController from "./point.js";
+import PointController, {Modes as pointControllerMode, EmptyEvent} from "./point.js";
 import SortsComponent, {SortType} from "../components/sorts.js";
 import TripDayComponent from "../components/trip-day.js";
 import TripDaysComponent from "../components/trip-days.js";
@@ -33,7 +33,7 @@ const getSortedEvents = (events, sortType = SortType.EVENT) => {
 
 const renderEvent = (event, tripEventsList, onDataChange, onViewChange) => {
   const pointController = new PointController(tripEventsList, onDataChange, onViewChange);
-  pointController.render(event);
+  pointController.render(event, pointControllerMode.DEFAULT);
   return pointController;
 };
 
@@ -41,11 +41,14 @@ export default class TripEventsController {
   constructor(container, eventsModel) {
     this._eventsModel = eventsModel;
     this._showedPointControllers = [];
+    this._addedNewEventHandlers = [];
     this._container = container;
     this._sortsComponent = null;
     this._tripDaysComponent = null;
     this._noPointsComponent = null;
+    this._creatingEvent = null;
 
+    this.createEvent = this.createEvent.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
 
@@ -76,6 +79,7 @@ export default class TripEventsController {
 
     render(this._container, this._sortsComponent);
     this._sortsComponent.setSortTypeChangeHandler(this._onSortTypeChange);
+
     render(this._container, this._tripDaysComponent);
 
     const showingEvents = groupingEventsInOrderForDays(getSortedEvents(events));
@@ -106,10 +110,37 @@ export default class TripEventsController {
     return eventControllers;
   }
 
+  createEvent() {
+    if (this._creatingEvent) {
+      return;
+    }
+    this._onViewChange();
+    const tripDaysList = this._tripDaysComponent.getElement().querySelector(`.trip-events__list`);
+    this._creatingEvent = new PointController(tripDaysList, this._onDataChange, this._onViewChange);
+    this._creatingEvent.render(EmptyEvent, pointControllerMode.ADDING);
+  }
+
   _onDataChange(controller, oldData, newData) {
-    const isSuccess = this._eventsModel.upDateEvent(oldData.id, newData);
-    if (isSuccess) {
-      controller.render(newData);
+    if (oldData === EmptyEvent) {
+      this._creatingEvent = null;
+      if (newData === null) {
+        this._callHandlers(this._addedNewEventHandlers);
+        controller.destroy();
+        this._upDateEvent();
+      } else {
+        this._eventsModel.addEvent(newData);
+        this._callHandlers(this._addedNewEventHandlers);
+        controller.render(newData, pointControllerMode.DEFAULT);
+        this._showedPointControllers = [].concat(controller, this._showedPointControllers);
+      }
+    } else if (newData === null) {
+      this._eventsModel.removeEvent(oldData.id);
+      this._upDateEvent();
+    } else {
+      const isSuccess = this._eventsModel.upDateEvent(oldData.id, newData);
+      if (isSuccess) {
+        controller.render(newData, pointControllerMode.DEFAULT);
+      }
     }
   }
 
@@ -145,5 +176,13 @@ export default class TripEventsController {
 
   _onFilterChange() {
     this._upDateEvent();
+  }
+
+  setAddedNewEventHandler(handler) {
+    this._addedNewEventHandlers.push(handler);
+  }
+
+  _callHandlers(handelrs) {
+    handelrs.forEach((handler) => handler());
   }
 }
