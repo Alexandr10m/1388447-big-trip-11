@@ -15,6 +15,18 @@ const parseDate = (dateString) => {
   return new Date(`${date[1]} ${date[0]} ${date[2]} ${date[3]}`);
 };
 
+const checkCity = (str) => {
+  return CITYES.some((city) => city.toLowerCase() === str.trim().toLowerCase());
+};
+
+const checkPrice = (str) => {
+  if (str.length === 0) {
+    return false;
+  }
+  const number = Number(str.trim());
+  return !Number.isNaN(number) ? true : false;
+};
+
 const parseFormData = (formData) => {
   const typeOfPoint = formData.get(`event-type`);
   const offers = [];
@@ -90,8 +102,8 @@ const createOffersTmpl = (offers) => {
   return offersMarkup;
 };
 const createFormEditorTmpl = (event, option) => {
-  const {price, timeFrame, isFavourite} = event;
-  const {typeOfPoint, city, offers, destination} = option;
+  const {timeFrame, isFavourite} = event;
+  const {typeOfPoint, city, offers, destination, price} = option;
   const isEmptyEvent = !timeFrame;
   const isCity = !!city;
   const isDistination = !!destination;
@@ -198,6 +210,7 @@ export default class EventEditor extends AbstractSmartComponent {
     this._event = event;
     this._typeOfPoint = event.typeOfPoint;
     this._city = event.city;
+    this._price = event.price;
     this._offers = event.offers;
     this._destination = event.destination;
     this._timeFrame = event.timeFrame;
@@ -216,12 +229,14 @@ export default class EventEditor extends AbstractSmartComponent {
       typeOfPoint: this._typeOfPoint,
       city: this._city,
       offers: this._offers,
-      destination: this._destination
+      destination: this._destination,
+      price: this._price,
     });
   }
 
   setFormSubmitHandler(handler) {
-    this.getElement().addEventListener(`submit`, handler);
+    const element = this.getElement();
+    element.addEventListener(`submit`, handler);
     this._submitHandler = handler;
   }
 
@@ -306,12 +321,11 @@ export default class EventEditor extends AbstractSmartComponent {
     const element = this.getElement();
     const listOfPoint = element.querySelector(`.event__type-list`);
     const destinationElement = element.querySelector(`.event__input--destination`);
-
+    const priceElement = element.querySelector(`.event__input--price`);
     listOfPoint.addEventListener(`click`, (evt) => {
       if (evt.target.tagName !== `LABEL`) {
         return;
       }
-
       if (!listOfPoint.contains(evt.target)) {
         return;
       }
@@ -321,16 +335,31 @@ export default class EventEditor extends AbstractSmartComponent {
       this.rerender();
     });
 
-    destinationElement.addEventListener(`change`, (evt) => {
-      if (this._city === evt.target.value || evt.target.value === ``) {
+    destinationElement.addEventListener(`input`, (evt) => {
+      if (!checkCity(evt.target.value)) {
+        evt.target.setCustomValidity(`Введите название города из списка`);
         return;
+      } else if (this._city === evt.target.value || evt.target.value === ``) {
+        return;
+      } else {
+        this._city = evt.target.value;
+        this._destination = {
+          description: getRandomArrayLength(DESTINATION.desription, 5),
+          photos: DESTINATION.photos
+        };
+        this.rerender();
       }
-      this._city = evt.target.value;
-      this._destination = {
-        description: getRandomArrayLength(DESTINATION.desription, 5),
-        photos: DESTINATION.photos
-      };
-      this.rerender();
+    });
+
+    priceElement.addEventListener(`change`, (evt) => {
+      if (!checkPrice(evt.target.value)) {
+        evt.target.setCustomValidity(`Введите число`);
+      } else if (this._price === evt.target.value && evt.target.value === ``) {
+        return;
+      } else {
+        this._price = evt.target.value;
+        this.rerender();
+      }
     });
   }
 }
