@@ -42,8 +42,7 @@ export default class PointController {
       document.addEventListener(`keydown`, this._onEscKeyDown);
     });
 
-    this._eventEditorComponent.setFormSubmitHandler((evt) => {
-      evt.preventDefault();
+    this._eventEditorComponent.setFormSubmitHandler(() => {
       const data = this._eventEditorComponent.getData();
       this._onDataChange(this, event, data);
     });

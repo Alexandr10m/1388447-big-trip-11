@@ -16,11 +16,14 @@ const parseDate = (dateString) => {
 };
 
 const checkCity = (str) => {
+  if (str.trim().length === 0) {
+    return false;
+  }
   return CITYES.some((city) => city.toLowerCase() === str.trim().toLowerCase());
 };
 
 const checkPrice = (str) => {
-  if (str.length === 0) {
+  if (str.trim().length === 0) {
     return false;
   }
   const number = Number(str.trim());
@@ -236,8 +239,22 @@ export default class EventEditor extends AbstractSmartComponent {
 
   setFormSubmitHandler(handler) {
     const element = this.getElement();
-    element.addEventListener(`submit`, handler);
     this._submitHandler = handler;
+    element.addEventListener(`submit`, (evt) => {
+      evt.preventDefault();
+
+      const destinationElement = element.querySelector(`.event__input--destination`);
+      const priceElement = element.querySelector(`.event__input--price`);
+
+      if (destinationElement.value === `` || priceElement === ``) {
+        destinationElement.setCustomValidity(`Введите название города из списка`);
+        priceElement.setCustomValidity(`Введите число`);
+        return;
+      }
+
+      this._submitHandler();
+    });
+
   }
 
   setFavouritesButtonClickHandler(handler) {
