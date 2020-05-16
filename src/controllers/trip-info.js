@@ -38,12 +38,14 @@ export default class TripInfo {
       this._filterController.render();
     }
 
-    this._buttonNewEventElement = this._container.querySelector(`.trip-main__event-add-btn`);
-    this._buttonNewEventElement.addEventListener(`click`, () => {
-      this._buttonNewEventElement.disabled = true;
-      this._filterController.reset();
-      this._callHandlers(this._clickNewEventHandlers);
-    });
+    if (!this._buttonNewEventElement) {
+      this._buttonNewEventElement = this._container.querySelector(`.trip-main__event-add-btn`);
+      this._buttonNewEventElement.addEventListener(`click`, () => {
+        this._buttonNewEventElement.disabled = true;
+        this._filterController.reset();
+        this._callHandlers(this._clickNewEventHandlers);
+      });
+    }
   }
 
   _onDataChange() {
