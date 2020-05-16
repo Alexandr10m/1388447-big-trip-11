@@ -150,12 +150,22 @@ export default class TripEventsController {
 
   _onSortTypeChange(sortType) {
     this._removeEvents();
+    this._removeCreatedEvent();
+
     const sortedEvents = getSortedEvents(this._eventsModel.getEvents(), sortType);
 
     const isGroupedByDay = sortType === SortType.EVENT;
     const showingEvents = isGroupedByDay ? groupingEventsInOrderForDays(sortedEvents) : sortedEvents;
 
     this._showedPointControllers = this._renderDay(showingEvents, isGroupedByDay);
+  }
+  _removeCreatedEvent() {
+    if (!this._creatingEvent) {
+      return;
+    }
+    this._creatingEvent.destroy();
+    this._creatingEvent = null;
+    this._callHandlers(this._addedNewEventHandlers);
   }
 
   _removeEvents() {
@@ -166,6 +176,7 @@ export default class TripEventsController {
   _removeDayList() {
     remove(this._sortsComponent);
     remove(this._tripDaysComponent);
+    this._removeCreatedEvent();
     this._removeEvents();
   }
 
