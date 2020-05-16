@@ -32,6 +32,9 @@ export default class Filter {
   }
 
   reset() {
+    if (this._currentFilter === FilterType.EVERYTHING) {
+      return;
+    }
     this._onFilterChange(FilterType.EVERYTHING);
     this.render();
   }
