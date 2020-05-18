@@ -5,6 +5,7 @@ import TripDayComponent from "../components/trip-day.js";
 import TripDaysComponent from "../components/trip-days.js";
 import {groupingEventsInOrderForDays} from "../utils/common.js";
 import {render, remove} from "../utils/render.js";
+import {HIDDEN_CLASS} from "../constants.js";
 
 
 const getSortedEvents = (events, sortType = SortType.EVENT) => {
@@ -195,5 +196,13 @@ export default class TripEventsController {
 
   _callHandlers(handelrs) {
     handelrs.forEach((handler) => handler());
+  }
+
+  hide() {
+    this._container.classList.add(HIDDEN_CLASS);
+  }
+
+  show() {
+    this._container.classList.remove(HIDDEN_CLASS);
   }
 }
