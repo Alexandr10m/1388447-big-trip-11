@@ -1,6 +1,5 @@
 import {createElement} from "../utils/render.js";
-
-const HIDDEN_CLASS = `trip-events--hidden`;
+import {HIDDEN_CLASS} from "../constants.js";
 
 export default class AbstractComponent {
   constructor() {
