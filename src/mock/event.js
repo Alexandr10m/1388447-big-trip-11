@@ -248,7 +248,7 @@ const getRandomArrayLength = (array, end = array.length) => {
 };
 
 const getRandomTimeFrame = () => {
-  const startDate = new Date(2020, 3, getRandomIntegerNumber(12, 16), getRandomIntegerNumber(8, 16));
+  const startDate = new Date(2020, getRandomIntegerNumber(1, 12), getRandomIntegerNumber(1, 30), getRandomIntegerNumber(1, 24), getRandomIntegerNumber(1, 60));
   const finishDate = new Date(2020, 3, startDate.getDate(), startDate.getHours(), startDate.getMinutes() + getRandomIntegerNumber(5, 120));
   return {
     start: startDate,
@@ -258,6 +258,7 @@ const getRandomTimeFrame = () => {
 const generateEvent = () => {
   return (
     {
+      id: String(new Date() + Math.random()),
       typeOfPoint: getRandomArrayItem(TYPE_OF_TRIP_POINT),
       city: getRandomArrayItem(CITYES),
       offers: getRandomArrayLength(OFFERS[getRandomArrayItem(TYPE_OF_TRIP_POINT)]),

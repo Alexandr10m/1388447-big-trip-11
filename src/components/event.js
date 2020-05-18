@@ -20,9 +20,11 @@ const createOfferTmpl = (offers) => {
 
 const createEventTmpl = ({typeOfPoint, city, price, offers, timeFrame}) => {
 
-  const startTimeOfEvent = formatTime(timeFrame.start);
-  const finishTimeOfEvent = formatTime(timeFrame.finish);
-  const durationTime = formatDiffenceTime(timeFrame);
+  const isEmptyEvent = !timeFrame;
+
+  const startTimeOfEvent = isEmptyEvent ? `` : formatTime(timeFrame.start);
+  const finishTimeOfEvent = isEmptyEvent ? `` : formatTime(timeFrame.finish);
+  const durationTime = isEmptyEvent ? `` : formatDiffenceTime(timeFrame);
 
   const isOffersShowing = !!offers.length;
   const offerstMarkup = createOfferTmpl(offers);
