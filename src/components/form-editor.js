@@ -32,26 +32,18 @@ const checkPrice = (str) => {
 
 const parseFormData = (formData) => {
   const typeOfPoint = formData.get(`event-type`);
-  const offers = [];
-
-  for (const it of OFFERS[typeOfPoint]) {
-    if (!formData.get(`event-offer-${it.name}`)) {
-      continue;
-    }
-    offers.push(it);
-  }
 
   return {
     typeOfPoint,
     city: formData.get(`event-destination`),
-    offers,
+    offers: OFFERS[typeOfPoint].filter((offer) => !!formData.get(`event-offer-${offer.name}`)),
     destination: null,
     price: Number(formData.get(`event-price`)),
     timeFrame: {
       start: parseDate(formData.get(`event-start-time`)),
       finish: parseDate(formData.get(`event-end-time`))
     },
-    isFavourite: formData.get(`event-favorite`) ? true : false
+    isFavourite: !!formData.get(`event-favorite`)
   };
 };
 
