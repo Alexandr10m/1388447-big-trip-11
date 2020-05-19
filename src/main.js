@@ -19,7 +19,9 @@ const tripEventsElement = document.querySelector(`.trip-events`);
 
 const tripInfoController = new TripInfoController(tripMainElement, eventsModel);
 const tripEventsController = new TripEventsController(tripEventsElement, eventsModel);
-const statsComponent = new StatsComponent();
+const statsComponent = new StatsComponent(eventsModel.getAllEvents());
+render(bodyContainerElement, statsComponent);
+statsComponent.hide();
 
 tripEventsController.setAddedNewEventHandler(tripInfoController.enableButtonNewEvent);
 tripInfoController.setClickNewEventButtonHandler(tripEventsController.createEvent);
@@ -38,4 +40,4 @@ tripInfoController.setOnClickMenuItem((menuItem) => {
 
 tripInfoController.render();
 tripEventsController.render();
-render(bodyContainerElement, statsComponent);
+
