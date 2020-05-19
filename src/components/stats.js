@@ -2,25 +2,21 @@ import AbstractSmartComponent from "./abstract-smart-component.js";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import {TYPE_OF_TRIP_POINT} from "../constants.js";
-import {formatDiffDays, formatDay} from "../utils/common.js";
+import {formatDiffDays, formatDay, filteredTransferEvents} from "../utils/common.js";
 
-// Рассчитаем высоту канваса в зависимости от того, сколько данных в него будет передаваться
+
 const BAR_HEIGHT = 55;
+const heightMoneyChart = `${BAR_HEIGHT * TYPE_OF_TRIP_POINT.length}px`;
+const heightTrasportChart = `${BAR_HEIGHT * filteredTransferEvents().length}px`;
+const heightSpendTimeChart = `${BAR_HEIGHT * TYPE_OF_TRIP_POINT.length}px`;
 
 const calcMoneyOnActivityes = (events, activity) => {
   const allEventsByActivity = events.filter((event) => event.typeOfPoint === activity);
   return allEventsByActivity.reduce((sum, current) => sum + current.price, 0);
 };
-
 const coutTransportByType = (events, type) => {
   return events.filter((event) => event.typeOfPoint === type.toLowerCase()).length;
 };
-
-const filteredTransferEvents = () => {
-  const filteredTypeOfPoint = TYPE_OF_TRIP_POINT.filter((type) => type !== `check-in` && type !== `sightseeing` && type !== `restaurant`);
-  return filteredTypeOfPoint.map((it) => it.toUpperCase());
-};
-
 const countDaysByActivity = (events, activity) => {
   let diffTime = 0;
   events.forEach((event) => {
@@ -31,6 +27,7 @@ const countDaysByActivity = (events, activity) => {
 
   return formatDay(diffTime);
 };
+
 
 const renderMoneyChart = (ctx, events) => {
   const typeOfPoint = TYPE_OF_TRIP_POINT.map((type) => type.toUpperCase());
@@ -265,31 +262,34 @@ export default class Stats extends AbstractSmartComponent {
     this._moneyChart = null;
     this._transportChart = null;
     this._timeSpendChart = null;
+
     this._renderChanrts();
   }
+
   getTemplate() {
     return createStatsTmpl();
   }
 
   _renderChanrts() {
     const element = this.getElement();
-    const moneyCtx = element.querySelector(`.statistics__chart--money`).getContext(`2d`);
-    const transportCtx = element.querySelector(`.statistics__chart--transport`).getContext(`2d`);
-    const timeSpendCtx = element.querySelector(`.statistics__chart--time`).getContext(`2d`);
+    const moneyCtx = element.querySelector(`.statistics__chart--money`);
+    const transportCtx = element.querySelector(`.statistics__chart--transport`);
+    const timeSpendCtx = element.querySelector(`.statistics__chart--time`);
 
-    moneyCtx.height = BAR_HEIGHT * 10;
-    transportCtx.height = BAR_HEIGHT * 4;
-    timeSpendCtx.height = BAR_HEIGHT * 4;
+    moneyCtx.style.height = heightMoneyChart;
+    transportCtx.style.height = heightTrasportChart;
+    timeSpendCtx.style.height = heightSpendTimeChart;
 
     this._resetCharts();
-    this._moneyChart = renderMoneyChart(moneyCtx, this._events);
-    this._transportChart = renderTransportChart(transportCtx, this._events);
-    this._timeSpendChart = renderSpendTimeChart(timeSpendCtx, this._events);
+
+    this._moneyChart = renderMoneyChart(moneyCtx, this._events.getEvents());
+    this._transportChart = renderTransportChart(transportCtx, this._events.getEvents());
+    this._timeSpendChart = renderSpendTimeChart(timeSpendCtx, this._events.getEvents());
   }
 
   show() {
     super.show();
-    // this.rerender(this._events);
+    this._rerender(this._events);
   }
 
   _rerender(events) {
