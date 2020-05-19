@@ -9,6 +9,16 @@ const formatFullTime = (date) => {
   return moment(date).format(`DD/MM/YYYY hh:mm`);
 };
 
+const formatDiffDays = (event) => {
+  const end = moment(event.timeFrame.finish);
+  return end.diff(event.timeFrame.start);
+};
+
+const formatDay = (time) => {
+  const isTime = !!time;
+  return isTime ? Math.round(time / 86400000) : 0;
+};
+
 const formatDiffenceTime = (date) => {
   const finish = moment(date.finish);
   const days = finish.diff(date.start, `days`);
@@ -117,4 +127,4 @@ const getTripInfo = (events) => {
   };
 };
 
-export {getTripInfo, isUnderdueDate, isOverdueDate, isRepeating, isOneDay, formatTime, formatDiffenceTime, groupingEventsInOrderForDays, formatFullTime, firstWordInUpper, isActiveEvent};
+export {formatDay, formatDiffDays, getTripInfo, isUnderdueDate, isOverdueDate, isRepeating, isOneDay, formatTime, formatDiffenceTime, groupingEventsInOrderForDays, formatFullTime, firstWordInUpper, isActiveEvent};
