@@ -19,7 +19,7 @@ const tripEventsElement = document.querySelector(`.trip-events`);
 
 const tripInfoController = new TripInfoController(tripMainElement, eventsModel);
 const tripEventsController = new TripEventsController(tripEventsElement, eventsModel);
-const statsComponent = new StatsComponent(eventsModel.getAllEvents());
+const statsComponent = new StatsComponent(eventsModel);
 render(bodyContainerElement, statsComponent);
 statsComponent.hide();
 
@@ -35,6 +35,7 @@ tripInfoController.setOnClickMenuItem((menuItem) => {
     case MenuItem.STATS:
       tripEventsController.hide();
       statsComponent.show();
+      break;
   }
 });
 
