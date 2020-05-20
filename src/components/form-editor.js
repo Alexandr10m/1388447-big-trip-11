@@ -239,16 +239,16 @@ export default class EventEditor extends AbstractSmartComponent {
   setFormSubmitHandler(handler) {
     const form = this.getElement();
     this._submitHandler = handler;
+
+    const inputDescription = form.elements[`event-destination`];
+    const inputPrice = form.elements[`event-price`];
+
     form.addEventListener(`submit`, (evt) => {
       evt.preventDefault();
 
-      const inputDescription = form.elements[`event-destination`];
-      const inputPrice = form.elements[`event-price`];
-
-      this._destinationInputHandler(inputDescription);
-      this._priceInputHandler(inputPrice);
-
-      this._submitHandler();
+      if (this._destinationInputHandler(inputDescription) && this._priceInputHandler(inputPrice)) {
+        this._submitHandler();
+      }
     });
   }
 
@@ -330,32 +330,40 @@ export default class EventEditor extends AbstractSmartComponent {
   }
 
   _destinationInputHandler(input) {
-    if (!checkCity(input.value)) {
+    if (!checkCity(input.value) || input.value === ``) {
       input.setCustomValidity(`Введите название города из списка`);
-      return;
+      return false;
+    } else {
+      if (this._city !== input.value) {
+        this._city = input.value;
+        this._destination = {
+          description: getRandomArrayLength(DESTINATION.desription, 5),
+          photos: DESTINATION.photos
+        };
+        this.rerender();
+      }
+      return true;
     }
 
-    if (this._city !== input.value || input.value !== ``) {
-      this._city = input.value;
-      this._destination = {
-        description: getRandomArrayLength(DESTINATION.desription, 5),
-        photos: DESTINATION.photos
-      };
-      this.rerender();
-    }
+    // if (this._city !== input.value || input.value !== ``) {
+    //   this._city = input.value;
+    //   this._destination = {
+    //     description: getRandomArrayLength(DESTINATION.desription, 5),
+    //     photos: DESTINATION.photos
+    //   };
+    //   this.rerender();
+    // }
   }
 
   _priceInputHandler(input) {
-    if (!checkPrice(input.value)) {
+    if (!checkPrice(input.value) || input.value === ``) {
       input.setCustomValidity(`Введите число`);
-      return;
-    }
-
-    if (this._price !== input.value || input.value !== ``) {
+      return false;
+    } else {
       this._price = input.value;
       input.setCustomValidity(``);
+      return true;
     }
-    this.rerender();
   }
 
   _subscribeOnEvents() {
@@ -380,7 +388,7 @@ export default class EventEditor extends AbstractSmartComponent {
       this._destinationInputHandler(evt.target);
     });
 
-    priceElement.addEventListener(`change`, (evt) => {
+    priceElement.addEventListener(`input`, (evt) => {
       this._priceInputHandler(evt.target);
     });
   }
