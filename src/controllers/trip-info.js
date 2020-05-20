@@ -4,11 +4,15 @@ import {render, RenderPosition, remove} from "../utils/render.js";
 import {getTripInfo} from "../utils/common.js";
 import MenuComponent from "../components/menu.js";
 
+
 export default class TripInfo {
   constructor(container, eventsModel) {
     this._container = container;
     this._eventsModel = eventsModel;
     this._clickNewEventHandlers = [];
+    this._clickMenuItemHandler = null;
+    this._activeMenuElement = null;
+    this._navigationElement = null;
     this._buttonNewEventElement = null;
     this._tripInfoComponent = null;
     this._filterController = null;
@@ -23,29 +27,19 @@ export default class TripInfo {
 
   render() {
     const allEvents = this._eventsModel.getAllEvents();
-    const tripConrolsElement = this._container.querySelector(`.trip-main__trip-controls`);
+    const tripControlsElement = this._container.querySelector(`.trip-main__trip-controls`);
 
     const tripInfoItem = getTripInfo(allEvents);
     this._tripInfoComponent = new TripInfoComponent(tripInfoItem);
 
     render(this._container, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
-    render(tripConrolsElement, this._menuComponenet);
+    render(tripControlsElement, this._menuComponenet);
 
-    if (!this._filterController) {
-      this._filterController = new FilterController(tripConrolsElement, this._onFilterChange);
-      this._filterController.render();
-    } else {
-      this._filterController.render();
-    }
+    this._menuComponenet.setClickMenuItemHandler(this._clickMenuItemHandler);
 
-    if (!this._buttonNewEventElement) {
-      this._buttonNewEventElement = this._container.querySelector(`.trip-main__event-add-btn`);
-      this._buttonNewEventElement.addEventListener(`click`, () => {
-        this._buttonNewEventElement.disabled = true;
-        this._filterController.reset();
-        this._callHandlers(this._clickNewEventHandlers);
-      });
-    }
+    this._renderFilter();
+
+    this._setButtonNewEventHandler();
   }
 
   _onDataChange() {
@@ -81,5 +75,29 @@ export default class TripInfo {
 
   _callHandlers(handlers) {
     handlers.forEach((handler) => handler());
+  }
+  _setButtonNewEventHandler() {
+    if (!this._buttonNewEventElement) {
+      this._buttonNewEventElement = this._container.querySelector(`.trip-main__event-add-btn`);
+      this._buttonNewEventElement.addEventListener(`click`, () => {
+        this._buttonNewEventElement.disabled = true;
+        this._filterController.reset();
+        this._callHandlers(this._clickNewEventHandlers);
+      });
+    }
+  }
+
+  _renderFilter() {
+    if (!this._filterController) {
+      const tripControlsElement = this._container.querySelector(`.trip-main__trip-controls`);
+      this._filterController = new FilterController(tripControlsElement, this._onFilterChange);
+      this._filterController.render();
+    } else {
+      this._filterController.render();
+    }
+  }
+
+  setOnClickMenuItem(handler) {
+    this._clickMenuItemHandler = handler.bind(this);
   }
 }

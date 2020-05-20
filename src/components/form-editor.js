@@ -16,42 +16,38 @@ const parseDate = (dateString) => {
 };
 
 const checkCity = (str) => {
-  if (str.trim().length === 0) {
+  const userCity = str.trim();
+
+  if (userCity.length === 0) {
     return false;
   }
-  return CITYES.some((city) => city.toLowerCase() === str.trim().toLowerCase());
+  return CITYES.some((city) => city.toLowerCase() === userCity.toLowerCase());
 };
 
 const checkPrice = (str) => {
-  if (str.trim().length === 0) {
+  const userPrice = str.trim();
+
+  if (userPrice.length === 0) {
     return false;
   }
-  const number = Number(str.trim());
-  return !Number.isNaN(number) ? true : false;
+  const number = Number(userPrice);
+  return Number.isNaN(number) ? false : true;
 };
 
 const parseFormData = (formData) => {
   const typeOfPoint = formData.get(`event-type`);
-  const offers = [];
-
-  for (const it of OFFERS[typeOfPoint]) {
-    if (!formData.get(`event-offer-${it.name}`)) {
-      continue;
-    }
-    offers.push(it);
-  }
 
   return {
     typeOfPoint,
     city: formData.get(`event-destination`),
-    offers,
+    offers: OFFERS[typeOfPoint].filter((offer) => !!formData.get(`event-offer-${offer.name}`)),
     destination: null,
     price: Number(formData.get(`event-price`)),
     timeFrame: {
       start: parseDate(formData.get(`event-start-time`)),
       finish: parseDate(formData.get(`event-end-time`))
     },
-    isFavourite: formData.get(`event-favorite`) ? true : false
+    isFavourite: !!formData.get(`event-favorite`)
   };
 };
 
@@ -225,6 +221,9 @@ export default class EventEditor extends AbstractSmartComponent {
 
     this._applyFlatpickr();
     this._subscribeOnEvents();
+
+    this._destinationInputHandler = this._destinationInputHandler.bind(this);
+    this._priceInputHandler = this._priceInputHandler.bind(this);
   }
 
   getTemplate() {
@@ -238,23 +237,19 @@ export default class EventEditor extends AbstractSmartComponent {
   }
 
   setFormSubmitHandler(handler) {
-    const element = this.getElement();
+    const form = this.getElement();
     this._submitHandler = handler;
-    element.addEventListener(`submit`, (evt) => {
+
+    const inputDescription = form.elements[`event-destination`];
+    const inputPrice = form.elements[`event-price`];
+
+    form.addEventListener(`submit`, (evt) => {
       evt.preventDefault();
 
-      const destinationElement = element.querySelector(`.event__input--destination`);
-      const priceElement = element.querySelector(`.event__input--price`);
-
-      if (destinationElement.value === `` || priceElement === ``) {
-        destinationElement.setCustomValidity(`Введите название города из списка`);
-        priceElement.setCustomValidity(`Введите число`);
-        return;
+      if (this._destinationInputHandler(inputDescription) && this._priceInputHandler(inputPrice)) {
+        this._submitHandler();
       }
-
-      this._submitHandler();
     });
-
   }
 
   setFavouritesButtonClickHandler(handler) {
@@ -334,6 +329,43 @@ export default class EventEditor extends AbstractSmartComponent {
     this._subscribeOnEvents();
   }
 
+  _destinationInputHandler(input) {
+    if (!checkCity(input.value) || input.value === ``) {
+      input.setCustomValidity(`Введите название города из списка`);
+      return false;
+    } else {
+      if (this._city !== input.value) {
+        this._city = input.value;
+        this._destination = {
+          description: getRandomArrayLength(DESTINATION.desription, 5),
+          photos: DESTINATION.photos
+        };
+        this.rerender();
+      }
+      return true;
+    }
+
+    // if (this._city !== input.value || input.value !== ``) {
+    //   this._city = input.value;
+    //   this._destination = {
+    //     description: getRandomArrayLength(DESTINATION.desription, 5),
+    //     photos: DESTINATION.photos
+    //   };
+    //   this.rerender();
+    // }
+  }
+
+  _priceInputHandler(input) {
+    if (!checkPrice(input.value) || input.value === ``) {
+      input.setCustomValidity(`Введите число`);
+      return false;
+    } else {
+      this._price = input.value;
+      input.setCustomValidity(``);
+      return true;
+    }
+  }
+
   _subscribeOnEvents() {
     const element = this.getElement();
     const listOfPoint = element.querySelector(`.event__type-list`);
@@ -353,30 +385,11 @@ export default class EventEditor extends AbstractSmartComponent {
     });
 
     destinationElement.addEventListener(`input`, (evt) => {
-      if (!checkCity(evt.target.value)) {
-        evt.target.setCustomValidity(`Введите название города из списка`);
-        return;
-      } else if (this._city === evt.target.value || evt.target.value === ``) {
-        return;
-      } else {
-        this._city = evt.target.value;
-        this._destination = {
-          description: getRandomArrayLength(DESTINATION.desription, 5),
-          photos: DESTINATION.photos
-        };
-        this.rerender();
-      }
+      this._destinationInputHandler(evt.target);
     });
 
-    priceElement.addEventListener(`change`, (evt) => {
-      if (!checkPrice(evt.target.value)) {
-        evt.target.setCustomValidity(`Введите число`);
-      } else if (this._price === evt.target.value && evt.target.value === ``) {
-        return;
-      } else {
-        this._price = evt.target.value;
-        this.rerender();
-      }
+    priceElement.addEventListener(`input`, (evt) => {
+      this._priceInputHandler(evt.target);
     });
   }
 }

@@ -249,7 +249,7 @@ const getRandomArrayLength = (array, end = array.length) => {
 
 const getRandomTimeFrame = () => {
   const startDate = new Date(2020, getRandomIntegerNumber(1, 12), getRandomIntegerNumber(1, 30), getRandomIntegerNumber(1, 24), getRandomIntegerNumber(1, 60));
-  const finishDate = new Date(2020, 3, startDate.getDate(), startDate.getHours(), startDate.getMinutes() + getRandomIntegerNumber(5, 120));
+  const finishDate = new Date(2020, startDate.getMonth(), startDate.getDate() + getRandomIntegerNumber(1, 5), startDate.getHours() + getRandomIntegerNumber(1, 24), startDate.getMinutes() + getRandomIntegerNumber(5, 60));
   return {
     start: startDate,
     finish: finishDate
