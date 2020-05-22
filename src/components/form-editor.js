@@ -40,7 +40,7 @@ const parseFormData = (formData) => {
   return {
     typeOfPoint,
     city: formData.get(`event-destination`),
-    offers: OFFERS[typeOfPoint].filter((offer) => !!formData.get(`event-offer-${offer.name}`)),
+    offers: OFFERS[typeOfPoint].filter((offer) => !!formData.get(`event-offer-${name}`)),
     destination: null,
     price: Number(formData.get(`event-price`)),
     timeFrame: {
@@ -52,7 +52,7 @@ const parseFormData = (formData) => {
 };
 
 const createDestinationPhotoTmpl = (photos) => {
-  const imgList = photos.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join(``);
+  const imgList = photos.map((photo) => `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`).join(``);
   return imgList;
 };
 const createListOfCityesTmpl = (cityes) => {
@@ -87,10 +87,11 @@ const createListEventTypeTmpl = (eventsTypes, checked) => {
 const createOffersTmpl = (offers) => {
   const offersMarkup = offers.map((offer, index) => {
     const isChecked = index === 0 || index === 1 ? `checked=""` : ``;
+    const name = offer.title.toLowerCase().split(` `).join(`-`);
     return `
     <div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.name}-${index}" type="checkbox" name="event-offer-${offer.name}" ${isChecked}>
-    <label class="event__offer-label" for="event-offer-${offer.name}-${index}">
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}-${index}" type="checkbox" name="event-offer-${name}" ${isChecked}>
+    <label class="event__offer-label" for="event-offer-${name}-${index}">
       <span class="event__offer-title">${offer.title}</span>
       +
       €&nbsp;<span class="event__offer-price">${offer.price}</span>
