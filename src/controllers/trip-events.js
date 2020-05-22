@@ -1,4 +1,5 @@
 import NoPointsComponent from "../components/no-points.js";
+import LoadingComponent from "../components/loading.js";
 import PointController, {Modes as pointControllerMode, EmptyEvent} from "./point.js";
 import SortsComponent, {SortType} from "../components/sorts.js";
 import TripDayComponent from "../components/trip-day.js";
@@ -44,6 +45,7 @@ export default class TripEventsController {
     this._showedPointControllers = [];
     this._addedNewEventHandlers = [];
     this._container = container;
+    this._loadingComponent = new LoadingComponent();
     this._sortsComponent = null;
     this._tripDaysComponent = null;
     this._noPointsComponent = null;
@@ -57,11 +59,14 @@ export default class TripEventsController {
     this._eventsModel.setFilterChangeHandler(this._onFilterChange);
 
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
+
+    this._renderLoading();
   }
 
   render() {
     const events = this._eventsModel.getEvents();
 
+    remove(this._loadingComponent);
     const isNoEvents = events.length === 0;
 
     if (isNoEvents) {
@@ -204,5 +209,8 @@ export default class TripEventsController {
 
   show() {
     this._container.classList.remove(HIDDEN_CLASS);
+  }
+  _renderLoading() {
+    render(this._container, this._loadingComponent);
   }
 }
