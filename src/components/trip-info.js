@@ -2,22 +2,24 @@ import AbstractComponent from "./abstract-componenet.js";
 import {MONTH_NAMES} from "../constants.js";
 
 const createInfoRouteTmpl = (info) => {
-  const {startPoint, intermediatePoint, endPoint, dateStart, dateEnd} = info;
-  const startMonth = MONTH_NAMES[dateStart.getMonth()];
-  const startDay = dateStart.getDate();
-  const endtMonth = MONTH_NAMES[dateEnd.getMonth()];
-  const endtDay = dateEnd.getDate();
+  const isShowingInfo = info === false;
+  const {startPoint = ``, intermediatePoint = ``, endPoint = ``, dateStart, dateEnd} = info;
+  const startMonth = isShowingInfo ? `` : MONTH_NAMES[dateStart.getMonth()];
+  const startDay = isShowingInfo ? `` : dateStart.getDate();
+  const endtMonth = isShowingInfo ? `` : MONTH_NAMES[dateEnd.getMonth()];
+  const endtDay = isShowingInfo ? `` : dateEnd.getDate();
 
   return `<div class="trip-info__main">
-    <h1 class="trip-info__title">${startPoint} &mdash; ${intermediatePoint} &mdash; ${endPoint}</h1>
+    ${isShowingInfo ? `` : `<h1 class="trip-info__title">${startPoint} &mdash; ${intermediatePoint} &mdash; ${endPoint}</h1>
 
-    <p class="trip-info__dates">${startMonth} ${startDay}&nbsp;&mdash;&nbsp;${endtMonth} ${endtDay}</p>
+    <p class="trip-info__dates">${startMonth} ${startDay}&nbsp;&mdash;&nbsp;${endtMonth} ${endtDay}</p>`}
   </div>`;
 };
 
 const createPriceTmpl = (price) => {
+  const basePrice = price ? price : 0;
   return `<p class="trip-info__cost">
-    Total: &euro;&nbsp;<span class="trip-info__cost-value">${price}</span>
+    Total: &euro;&nbsp;<span class="trip-info__cost-value">${basePrice}</span>
   </p>`;
 };
 
