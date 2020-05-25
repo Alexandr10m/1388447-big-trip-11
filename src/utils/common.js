@@ -114,7 +114,12 @@ const getTripInfo = (events) => {
   }
 
   sortedEvents.forEach((it) => {
-    price = price + it.price;
+    if (sortedEvents.length === 0) {
+      return;
+    } else {
+      price = price + it.price;
+    }
+
   });
 
   return {

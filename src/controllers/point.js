@@ -1,5 +1,6 @@
 import EventComponent from "../components/event.js";
 import EventEditorComponent from "../components/form-editor.js";
+import PointModel from "../models/point.js";
 import {render, replace, remove, RenderPosition} from "../utils/render.js";
 
 const Modes = {
@@ -18,11 +19,28 @@ const EmptyEvent = {
   isFavourite: false
 };
 
+const parseDate = (dateString) => {
+  const time = dateString.split(`/`);
+  return new Date(`${time[1]} ${time[0]} ${time[2]} ${time[3]}`);
+};
+
+const adapterDestination = (destination) => {
+  return {
+    "description": destination.description,
+    "name": destination.name,
+    "pictures": destination.photos,
+  };
+};
+
 export default class PointController {
-  constructor(container, onDataChange, onViewChange) {
+  constructor(container, onDataChange, onViewChange, destinations, offers) {
     this._container = container;
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
+    this._destinations = destinations;
+    this._offers = offers;
+    this._typesOfPoint = [];
+    this._cityes = [];
     this._eventComponent = null;
     this._eventEditorComponent = null;
     this._mode = Modes.DEFAULT;
@@ -34,8 +52,11 @@ export default class PointController {
     const oldEventEditorComponent = this._eventEditorComponent;
     this._mode = mode;
 
+    this._typesOfPoint = this._offers.map((it) => it.type);
+    this._cityes = this._destinations.map((it) => it.name);
+
     this._eventComponent = new EventComponent(event);
-    this._eventEditorComponent = new EventEditorComponent(event);
+    this._eventEditorComponent = new EventEditorComponent(event, this._typesOfPoint, this._cityes);
 
     this._eventComponent.setEditButtonClickHandler(() => {
       this._replaceEventToEditor();
@@ -43,12 +64,16 @@ export default class PointController {
     });
 
     this._eventEditorComponent.setFormSubmitHandler(() => {
-      const data = this._eventEditorComponent.getData();
+      const formData = this._eventEditorComponent.getData();
+      const data = this._parseFormData(formData);
       this._onDataChange(this, event, data);
     });
 
     this._eventEditorComponent.setFavouritesButtonClickHandler(() => {
-      this._onDataChange(this, event, Object.assign({}, event, {isFavourite: !event.isFavourite}));
+      const newPoint = PointModel.clone(event);
+      newPoint.isFavourite = !newPoint.isFavourite;
+
+      this._onDataChange(this, event, newPoint);
     });
 
     this._eventEditorComponent.setDeleteButtonClickHandler(() => {
@@ -61,6 +86,15 @@ export default class PointController {
       } else {
         this._replaceEditorToEvent();
       }
+    });
+
+    this._eventEditorComponent.setInputEventTypeClickHandler((type) => {
+      const offer = this._offers.find((it) => it.type.toLowerCase() === type.toLowerCase());
+      return offer.offers;
+    });
+
+    this._eventEditorComponent.setInputCityClickHandler((city) => {
+      return this._destinations.find((it) => it.name.toLowerCase() === city.toLowerCase());
     });
 
     switch (mode) {
@@ -82,7 +116,6 @@ export default class PointController {
         render(this._container, this._eventEditorComponent, RenderPosition.AFTERBEGIN);
         break;
     }
-
   }
 
   _setDefaultView() {
@@ -120,6 +153,22 @@ export default class PointController {
     remove(this._eventComponent);
     remove(this._eventEditorComponent);
     document.removeEventListener(`keydown`, this._onEscKeyDown);
+  }
+  _parseFormData(formData) {
+    const type = formData.get(`event-type`);
+    const typeOffer = this._offers.find((it) => it.type === type);
+    const city = formData.get(`event-destination`);
+    const destination = this._destinations.find((it) => it.name === city);
+
+    return new PointModel({
+      "base_price": Number(formData.get(`event-price`)),
+      "date_from": parseDate(formData.get(`event-start-time`)).toISOString(),
+      "date_to": parseDate(formData.get(`event-end-time`)).toISOString(),
+      "is_favorite": !!formData.get(`event-favorite`),
+      "type": type,
+      "offers": typeOffer.offers,
+      "destination": adapterDestination(destination),
+    });
   }
 }
 

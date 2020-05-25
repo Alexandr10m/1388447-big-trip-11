@@ -31,7 +31,6 @@ export default class TripInfo {
 
     const tripInfoItem = getTripInfo(allEvents);
     this._tripInfoComponent = new TripInfoComponent(tripInfoItem);
-
     render(this._container, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
     render(tripControlsElement, this._menuComponenet);
 
@@ -51,9 +50,12 @@ export default class TripInfo {
   }
 
   _remove() {
-    remove(this._tripInfoComponent);
-    this._filterController.destroy();
-    this._filterController = null;
+    if (this._tripInfoComponent && this._filterController) {
+      remove(this._tripInfoComponent);
+      this._filterController.destroy();
+      this._filterController = null;
+    }
+
   }
 
   _upDateTripInfo() {

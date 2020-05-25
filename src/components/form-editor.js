@@ -1,5 +1,3 @@
-import {TYPE_OF_TRIP_POINT} from "../constants.js";
-import {CITYES, OFFERS, getRandomArrayLength, getRandomArrayItem, DESTINATION} from "../mock/event.js";
 import {formatFullTime, firstWordInUpper, isActiveEvent} from "../utils/common.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import flatpickr from "flatpickr";
@@ -9,21 +7,6 @@ const ButtonOption = {
   CANCEL: `Cancel`,
   DELETE: `Delete`
 };
-
-const parseDate = (dateString) => {
-  const date = dateString.split(`/`);
-  return new Date(`${date[1]} ${date[0]} ${date[2]} ${date[3]}`);
-};
-
-const checkCity = (str) => {
-  const userCity = str.trim();
-
-  if (userCity.length === 0) {
-    return false;
-  }
-  return CITYES.some((city) => city.toLowerCase() === userCity.toLowerCase());
-};
-
 const checkPrice = (str) => {
   const userPrice = str.trim();
 
@@ -33,26 +16,8 @@ const checkPrice = (str) => {
   const number = Number(userPrice);
   return Number.isNaN(number) ? false : true;
 };
-
-const parseFormData = (formData) => {
-  const typeOfPoint = formData.get(`event-type`);
-
-  return {
-    typeOfPoint,
-    city: formData.get(`event-destination`),
-    offers: OFFERS[typeOfPoint].filter((offer) => !!formData.get(`event-offer-${offer.name}`)),
-    destination: null,
-    price: Number(formData.get(`event-price`)),
-    timeFrame: {
-      start: parseDate(formData.get(`event-start-time`)),
-      finish: parseDate(formData.get(`event-end-time`))
-    },
-    isFavourite: !!formData.get(`event-favorite`)
-  };
-};
-
 const createDestinationPhotoTmpl = (photos) => {
-  const imgList = photos.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join(``);
+  const imgList = photos.map((photo) => `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`).join(``);
   return imgList;
 };
 const createListOfCityesTmpl = (cityes) => {
@@ -87,10 +52,11 @@ const createListEventTypeTmpl = (eventsTypes, checked) => {
 const createOffersTmpl = (offers) => {
   const offersMarkup = offers.map((offer, index) => {
     const isChecked = index === 0 || index === 1 ? `checked=""` : ``;
+    const name = offer.title.toLowerCase().split(` `).join(`-`);
     return `
     <div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.name}-${index}" type="checkbox" name="event-offer-${offer.name}" ${isChecked}>
-    <label class="event__offer-label" for="event-offer-${offer.name}-${index}">
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}-${index}" type="checkbox" name="event-offer-${name}" ${isChecked}>
+    <label class="event__offer-label" for="event-offer-${name}-${index}">
       <span class="event__offer-title">${offer.title}</span>
       +
       €&nbsp;<span class="event__offer-price">${offer.price}</span>
@@ -102,7 +68,7 @@ const createOffersTmpl = (offers) => {
 };
 const createFormEditorTmpl = (event, option) => {
   const {timeFrame, isFavourite} = event;
-  const {typeOfPoint, city, offers, destination, price} = option;
+  const {typeOfPoint, city, offers, destination, price, cityes, typesOfPoint} = option;
   const isEmptyEvent = !timeFrame;
   const isCity = !!city;
   const isDistination = !!destination;
@@ -110,8 +76,9 @@ const createFormEditorTmpl = (event, option) => {
   const date = new Date();
   const timeStart = isEmptyEvent ? formatFullTime(date) : formatFullTime(timeFrame.start);
   const timeEnd = isEmptyEvent ? formatFullTime(date) : formatFullTime(timeFrame.finish);
-  const optionsOfTypeEventMarkup = createListEventTypeTmpl(TYPE_OF_TRIP_POINT, typeOfPoint);
-  const optionsOfCityMarkup = createListOfCityesTmpl(CITYES);
+  const optionsOfTypeEventMarkup = createListEventTypeTmpl(typesOfPoint, typeOfPoint);
+  const optionsOfCityMarkup = createListOfCityesTmpl(cityes);
+
   const preposition = isActiveEvent(typeOfPoint) ? `in` : `to`;
   const buttonOption = isEmptyEvent ? ButtonOption.CANCEL : ButtonOption.DELETE;
 
@@ -204,9 +171,11 @@ const createFormEditorTmpl = (event, option) => {
 };
 
 export default class EventEditor extends AbstractSmartComponent {
-  constructor(event) {
+  constructor(event, types, cityes) {
     super();
     this._event = event;
+    this._typesOfPoint = types;
+    this._cityes = cityes;
     this._typeOfPoint = event.typeOfPoint;
     this._city = event.city;
     this._price = event.price;
@@ -218,12 +187,11 @@ export default class EventEditor extends AbstractSmartComponent {
     this._favouriteHandler = null;
     this._deleteHandler = null;
     this._closeHandler = null;
+    this._clickEventsTypeList = null;
+    this._inputCity = null;
 
     this._applyFlatpickr();
     this._subscribeOnEvents();
-
-    this._destinationInputHandler = this._destinationInputHandler.bind(this);
-    this._priceInputHandler = this._priceInputHandler.bind(this);
   }
 
   getTemplate() {
@@ -233,6 +201,8 @@ export default class EventEditor extends AbstractSmartComponent {
       offers: this._offers,
       destination: this._destination,
       price: this._price,
+      cityes: this._cityes,
+      typesOfPoint: this._typesOfPoint,
     });
   }
 
@@ -246,7 +216,7 @@ export default class EventEditor extends AbstractSmartComponent {
     form.addEventListener(`submit`, (evt) => {
       evt.preventDefault();
 
-      if (this._destinationInputHandler(inputDescription) && this._priceInputHandler(inputPrice)) {
+      if (this._validityInputCity(inputDescription) && this._priceInputHandler(inputPrice)) {
         this._submitHandler();
       }
     });
@@ -277,8 +247,7 @@ export default class EventEditor extends AbstractSmartComponent {
 
   getData() {
     const form = this.getElement();
-    const formData = new FormData(form);
-    return parseFormData(formData);
+    return new FormData(form);
   }
 
   removeElement() {
@@ -312,6 +281,20 @@ export default class EventEditor extends AbstractSmartComponent {
     }
   }
 
+  _validityInputCity(input) {
+    const userCity = input.value.trim();
+    const isEmptyInput = userCity.length === 0;
+    const isCityExist = this._cityes.some((city) => city.toLowerCase() === userCity.toLowerCase());
+
+    if (!isEmptyInput && isCityExist) {
+      input.setCustomValidity(``);
+      return true;
+    }
+
+    input.setCustomValidity(`Введите название города из списка`);
+    return false;
+  }
+
   reset() {
     this._typeOfPoint = this._event.typeOfPoint;
     this._city = this._event.city;
@@ -326,33 +309,9 @@ export default class EventEditor extends AbstractSmartComponent {
     this.setFavouritesButtonClickHandler(this._favouriteHandler);
     this.setDeleteButtonClickHandler(this._deleteHandler);
     this.setCloseButtonClickHandler(this._closeHandler);
+    this.setInputEventTypeClickHandler(this._clickEventsTypeList);
+    this.setInputCityClickHandler(this._inputCity);
     this._subscribeOnEvents();
-  }
-
-  _destinationInputHandler(input) {
-    if (!checkCity(input.value) || input.value === ``) {
-      input.setCustomValidity(`Введите название города из списка`);
-      return false;
-    } else {
-      if (this._city !== input.value) {
-        this._city = input.value;
-        this._destination = {
-          description: getRandomArrayLength(DESTINATION.desription, 5),
-          photos: DESTINATION.photos
-        };
-        this.rerender();
-      }
-      return true;
-    }
-
-    // if (this._city !== input.value || input.value !== ``) {
-    //   this._city = input.value;
-    //   this._destination = {
-    //     description: getRandomArrayLength(DESTINATION.desription, 5),
-    //     photos: DESTINATION.photos
-    //   };
-    //   this.rerender();
-    // }
   }
 
   _priceInputHandler(input) {
@@ -368,28 +327,42 @@ export default class EventEditor extends AbstractSmartComponent {
 
   _subscribeOnEvents() {
     const element = this.getElement();
-    const listOfPoint = element.querySelector(`.event__type-list`);
-    const destinationElement = element.querySelector(`.event__input--destination`);
     const priceElement = element.querySelector(`.event__input--price`);
-    listOfPoint.addEventListener(`click`, (evt) => {
+
+    priceElement.addEventListener(`input`, (evt) => {
+      this._priceInputHandler(evt.target);
+    });
+  }
+
+  setInputEventTypeClickHandler(handler) {
+    this._clickEventsTypeList = handler;
+    const inputEventType = this.getElement().querySelector(`.event__type-list`);
+    inputEventType.addEventListener(`click`, (evt) => {
       if (evt.target.tagName !== `LABEL`) {
         return;
       }
-      if (!listOfPoint.contains(evt.target)) {
+      if (!inputEventType.contains(evt.target)) {
         return;
       }
       const input = evt.target.previousElementSibling;
       this._typeOfPoint = input.value;
-      this._offers = getRandomArrayLength(OFFERS[getRandomArrayItem(TYPE_OF_TRIP_POINT)]);
+      this._offers = handler(input.value);
       this.rerender();
     });
+  }
 
-    destinationElement.addEventListener(`input`, (evt) => {
-      this._destinationInputHandler(evt.target);
-    });
-
-    priceElement.addEventListener(`input`, (evt) => {
-      this._priceInputHandler(evt.target);
+  setInputCityClickHandler(handler) {
+    this._inputCity = handler;
+    const inputCity = this.getElement().querySelector(`.event__input--destination`);
+    inputCity.addEventListener(`input`, (evt) => {
+      if (!this._validityInputCity(evt.target)) {
+        return;
+      }
+      if (this._city !== evt.target.value) {
+        this._city = evt.target.value;
+        this._destination = handler(evt.target.value);
+        this.rerender();
+      }
     });
   }
 }

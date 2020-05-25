@@ -1,4 +1,15 @@
 import {TYPE_OF_TRIP_POINT} from "../constants.js";
+
+
+const getRandomIntegerNumber = (min, max) => {
+  return min + Math.floor(Math.random() * (max - min));
+};
+
+const getRandomArrayItem = (array) => {
+  const randomItem = getRandomIntegerNumber(0, array.length);
+  return array[randomItem];
+};
+
 const CITYES = [
   `Amsterdam`,
   `Moscow`,
@@ -8,212 +19,162 @@ const CITYES = [
 ];
 const OFFERS = {
   "taxi": [{
-    name: `luggage`,
     title: `Add luggage`,
     price: 30
   }, {
-    name: `comfort`,
     title: `Switch to comfort class`,
     price: 100
   }, {
-    name: `meal`,
     title: `Add meal`,
     price: 15
   }, {
-    name: `seats`,
     title: `Choose seats`,
     price: 5
   }, {
-    name: `train`,
     title: `Travel by train`,
     price: 40
   }],
   "bus": [{
-    name: `luggage`,
     title: `Add luggage`,
     price: 30
   }, {
-    name: `comfort`,
     title: `Switch to comfort class`,
     price: 100
   }, {
-    name: `meal`,
     title: `Add meal`,
     price: 15
   }, {
-    name: `seats`,
     title: `Choose seats`,
     price: 5
   }, {
-    name: `train`,
     title: `Travel by train`,
     price: 40
   }],
   "train": [{
-    name: `luggage`,
     title: `Add luggage`,
     price: 30
   }, {
-    name: `comfort`,
     title: `Switch to comfort class`,
     price: 100
   }, {
-    name: `meal`,
     title: `Add meal`,
     price: 15
   }, {
-    name: `seats`,
     title: `Choose seats`,
     price: 5
   }, {
-    name: `train`,
     title: `Travel by train`,
     price: 40
   }],
   "ship": [{
-    name: `luggage`,
     title: `Add luggage`,
     price: 30
   }, {
-    name: `comfort`,
     title: `Switch to comfort class`,
     price: 100
   }, {
-    name: `meal`,
     title: `Add meal`,
     price: 15
   }, {
-    name: `seats`,
     title: `Choose seats`,
     price: 5
   }, {
-    name: `train`,
     title: `Travel by train`,
     price: 40
   }],
   "transport": [{
-    name: `luggage`,
     title: `Add luggage`,
     price: 30
   }, {
-    name: `comfort`,
     title: `Switch to comfort class`,
     price: 100
   }, {
-    name: `meal`,
     title: `Add meal`,
     price: 15
   }, {
-    name: `seats`,
     title: `Choose seats`,
     price: 5
   }, {
-    name: `train`,
     title: `Travel by train`,
     price: 40
   }],
   "drive": [{
-    name: `luggage`,
     title: `Add luggage`,
     price: 30
   }, {
-    name: `comfort`,
     title: `Switch to comfort class`,
     price: 100
   }, {
-    name: `meal`,
     title: `Add meal`,
     price: 15
   }, {
-    name: `seats`,
     title: `Choose seats`,
     price: 5
   }, {
-    name: `train`,
     title: `Travel by train`,
     price: 40
   }],
   "flight": [{
-    name: `luggage`,
     title: `Add luggage`,
     price: 30
   }, {
-    name: `comfort`,
     title: `Switch to comfort class`,
     price: 100
   }, {
-    name: `meal`,
     title: `Add meal`,
     price: 15
   }, {
-    name: `seats`,
     title: `Choose seats`,
     price: 5
   }, {
-    name: `train`,
     title: `Travel by train`,
     price: 40
   }],
   "check-in": [{
-    name: `luggage`,
     title: `Add luggage`,
     price: 30
   }, {
-    name: `comfort`,
     title: `Switch to comfort class`,
     price: 100
   }, {
-    name: `meal`,
     title: `Add meal`,
     price: 15
   }, {
-    name: `seats`,
     title: `Choose seats`,
     price: 5
   }, {
-    name: `train`,
     title: `Travel by train`,
     price: 40
   }],
   "sightseeing": [{
-    name: `luggage`,
     title: `Add luggage`,
     price: 30
   }, {
-    name: `comfort`,
     title: `Switch to comfort class`,
     price: 100
   }, {
-    name: `meal`,
     title: `Add meal`,
     price: 15
   }, {
-    name: `seats`,
     title: `Choose seats`,
     price: 5
   }, {
-    name: `train`,
     title: `Travel by train`,
     price: 40
   }],
   "restaurant": [{
-    name: `luggage`,
     title: `Add luggage`,
     price: 30
   }, {
-    name: `comfort`,
     title: `Switch to comfort class`,
     price: 100
   }, {
-    name: `meal`,
     title: `Add meal`,
     price: 15
   }, {
-    name: `seats`,
     title: `Choose seats`,
     price: 5
   }, {
-    name: `train`,
     title: `Travel by train`,
     price: 40
   }],
@@ -231,15 +192,21 @@ const DESTINATION = {
     `Nunc fermentum tortor ac porta dapibus.`,
     `In rutrum ac purus sit amet tempus.`
   ],
-  photos: [`http://picsum.photos/248/152?r=${Math.random()}`, `http://picsum.photos/248/152?r=${Math.random()}`]
+  photos: [{
+    src: `http://picsum.photos/248/152?r=${Math.random()}`,
+    description: `${getRandomArrayItem(CITYES)}`,
+  },
+  {
+    src: `http://picsum.photos/248/152?r=${Math.random()}`,
+    description: `${getRandomArrayItem(CITYES)}`,
+  },
+  {
+    src: `http://picsum.photos/248/152?r=${Math.random()}`,
+    description: `${getRandomArrayItem(CITYES)}`,
+  }],
 };
-const getRandomArrayItem = (array) => {
-  const randomItem = getRandomIntegerNumber(0, array.length);
-  return array[randomItem];
-};
-const getRandomIntegerNumber = (min, max) => {
-  return min + Math.floor(Math.random() * (max - min));
-};
+
+
 const getRandomArrayLength = (array, end = array.length) => {
   const newArrayLength = new Array(getRandomIntegerNumber(0, end))
   .fill(``)
