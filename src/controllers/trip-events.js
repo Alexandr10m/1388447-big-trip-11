@@ -141,14 +141,20 @@ export default class TripEventsController {
         controller.destroy();
         this._upDateEvent();
       } else {
-        this._eventsModel.addEvent(newData);
-        this._upDateEvent();
-        controller.destroy();
-        this._callHandlers(this._addedNewEventHandlers);
+        this._api.createEvent(newData)
+          .then((pointModel) => {
+            this._eventsModel.addEvent(pointModel);
+            this._upDateEvent();
+            controller.destroy();
+            this._callHandlers(this._addedNewEventHandlers);
+          });
       }
     } else if (newData === null) {
-      this._eventsModel.removeEvent(oldData.id);
-      this._upDateEvent();
+      this._api.deleteEvent(oldData.id)
+        .then(() => {
+          this._eventsModel.removeEvent(oldData.id);
+          this._upDateEvent();
+        });
     } else {
       this._api.updateEvent(oldData.id, newData)
         .then((pointModel) => {
