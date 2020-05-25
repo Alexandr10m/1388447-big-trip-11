@@ -1,4 +1,5 @@
 import PointModel from "./models/point.js";
+import DestinationModel from "./models/destination.js";
 
 const Method = {
   GET: `GET`,
@@ -25,6 +26,27 @@ export default class API {
     return this._load({url: `points`})
       .then((response) => response.json())
       .then(PointModel.parseEvents);
+  }
+
+  getDestinations() {
+    return this._load({url: `destinations`})
+      .then((response) => response.json())
+      .then(DestinationModel.parseEvents);
+  }
+
+  getOffers() {
+    return this._load({url: `offers`})
+    .then((response) => response.json());
+  }
+
+  updateEvent(id, data) {
+    return this._load({url: `points/${id}`,
+      method: Method.PUT,
+      body: JSON.stringify(data.toRAW()),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then((response) => response.json())
+      .then(PointModel.parseEvent);
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
