@@ -329,6 +329,7 @@ export default class EventEditor extends AbstractSmartComponent {
     } else {
       this._price = input.value;
       input.setCustomValidity(``);
+      this.rerender();
       return true;
     }
   }

@@ -33,12 +33,6 @@ const getSortedEvents = (events, sortType = SortType.EVENT) => {
   return sortedEvents;
 };
 
-const renderEvent = (event, tripEventsList, onDataChange, onViewChange, destinations, offersModel) => {
-  const pointController = new PointController(tripEventsList, onDataChange, onViewChange, destinations, offersModel);
-  pointController.render(event, pointControllerMode.DEFAULT);
-  return pointController;
-};
-
 export default class TripEventsController {
   constructor(container, eventsModel, destinationsModel, offersModel, api) {
     this._eventsModel = eventsModel;
@@ -96,29 +90,31 @@ export default class TripEventsController {
   }
 
   _renderDay(events, isGroupedByDay = true) {
-    const destinations = this._destinationsModel.getDestinations();
-    const offersModel = this._offersModel.getOffers();
-
     const tripDaysList = this._tripDaysComponent.getElement();
     tripDaysList.innerHTML = ``;
     let eventControllers = [];
-
     if (isGroupedByDay) {
       let dayNumber = 1;
       for (const eventsForDay of events) {
         const newDayComponent = new TripDayComponent(eventsForDay, dayNumber);
         const tripEventsList = newDayComponent.getElement().querySelector(`.trip-events__list`);
-        eventControllers = eventControllers.concat(eventsForDay.map((event) => renderEvent(event, tripEventsList, this._onDataChange, this._onViewChange, destinations, offersModel)));
+        eventControllers = eventControllers.concat(eventsForDay.map((event) => this._renderEvents(event, tripEventsList)));
         render(tripDaysList, newDayComponent);
         dayNumber++;
       }
     } else {
       const newDayComponent = new TripDayComponent(events);
       const tripEventsList = newDayComponent.getElement().querySelector(`.trip-events__list`);
-      eventControllers = events.map((event) => renderEvent(event, tripEventsList, this._onDataChange, this._onViewChange, destinations, offersModel));
+      eventControllers = events.map((event) => this._renderEvents(event, tripEventsList));
       render(tripDaysList, newDayComponent);
     }
     return eventControllers;
+  }
+
+  _renderEvents(event, container) {
+    const pointController = new PointController(container, this._onDataChange, this._onViewChange, this._destinationsModel.getDestinations(), this._offersModel.getOffers());
+    pointController.render(event, pointControllerMode.DEFAULT);
+    return pointController;
   }
 
   createEvent() {
