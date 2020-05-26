@@ -67,6 +67,7 @@ export default class PointController {
       const formData = this._eventEditorComponent.getData();
       const data = this._parseFormData(formData);
       this._eventEditorComponent.disabledForm();
+      this._eventEditorComponent.setData({saveButtonText: `Saving...`});
       this._onDataChange(this, event, data);
     });
 
@@ -79,6 +80,7 @@ export default class PointController {
 
     this._eventEditorComponent.setDeleteButtonClickHandler(() => {
       this._eventEditorComponent.disabledForm();
+      this._eventEditorComponent.setData({deleteButtonText: `Deleting...`});
       this._onDataChange(this, event, null);
     });
 
@@ -175,6 +177,13 @@ export default class PointController {
 
   unblockForm() {
     this._eventEditorComponent.enabledForm();
+  }
+
+  setDefaultButtonText() {
+    this._eventEditorComponent.setData({
+      saveButtonText: `Save`,
+      deleteButtonText: `Delete`,
+    });
   }
 }
 
