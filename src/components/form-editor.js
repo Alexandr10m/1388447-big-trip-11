@@ -189,6 +189,8 @@ export default class EventEditor extends AbstractSmartComponent {
     this._closeHandler = null;
     this._clickEventsTypeList = null;
     this._inputCity = null;
+    this._inputs = null;
+    this._buttons = null;
 
     this._applyFlatpickr();
     this._subscribeOnEvents();
@@ -364,5 +366,31 @@ export default class EventEditor extends AbstractSmartComponent {
         this.rerender();
       }
     });
+  }
+
+  disabledForm() {
+    const form = this.getElement();
+    this._inputs = Array.from(form.querySelectorAll(`input`));
+    this._buttons = Array.from(form.querySelectorAll(`button`));
+
+    this._inputs.forEach((it) => {
+      it.disabled = true;
+    });
+
+    this._buttons.forEach((it) => {
+      it.disabled = true;
+    });
+  }
+
+  enabledForm() {
+    this._inputs.forEach((it) => {
+      it.disabled = false;
+    });
+    this._inputs = null;
+
+    this._buttons.forEach((it) => {
+      it.disabled = false;
+    });
+    this._buttons = null;
   }
 }

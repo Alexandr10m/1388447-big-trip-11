@@ -144,6 +144,7 @@ export default class TripEventsController {
         this._api.createEvent(newData)
           .then((pointModel) => {
             this._eventsModel.addEvent(pointModel);
+            controller.unblockForm();
             this._upDateEvent();
             controller.destroy();
             this._callHandlers(this._addedNewEventHandlers);
@@ -153,6 +154,7 @@ export default class TripEventsController {
       this._api.deleteEvent(oldData.id)
         .then(() => {
           this._eventsModel.removeEvent(oldData.id);
+          controller.unblockForm();
           this._upDateEvent();
         });
     } else {
@@ -160,6 +162,7 @@ export default class TripEventsController {
         .then((pointModel) => {
           const isSuccess = this._eventsModel.upDateEvent(oldData.id, pointModel);
           if (isSuccess) {
+            controller.unblockForm();
             controller.render(pointModel, pointControllerMode.DEFAULT);
             this._upDateEvent();
           }
