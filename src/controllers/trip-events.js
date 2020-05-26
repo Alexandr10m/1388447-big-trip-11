@@ -33,12 +33,6 @@ const getSortedEvents = (events, sortType = SortType.EVENT) => {
   return sortedEvents;
 };
 
-const renderEvent = (event, tripEventsList, onDataChange, onViewChange, destinations, offersModel) => {
-  const pointController = new PointController(tripEventsList, onDataChange, onViewChange, destinations, offersModel);
-  pointController.render(event, pointControllerMode.DEFAULT);
-  return pointController;
-};
-
 export default class TripEventsController {
   constructor(container, eventsModel, destinationsModel, offersModel, api) {
     this._eventsModel = eventsModel;
@@ -77,6 +71,7 @@ export default class TripEventsController {
       render(this._container, this._noPointsComponent);
       return;
     }
+
     if (this._noPointsComponent) {
       remove(this._noPointsComponent);
       this._noPointsComponent = null;
@@ -86,39 +81,39 @@ export default class TripEventsController {
     this._sortsComponent = new SortsComponent();
 
     render(this._container, this._sortsComponent);
+    render(this._container, this._tripDaysComponent);
     this._sortsComponent.setSortTypeChangeHandler(this._onSortTypeChange);
 
-    render(this._container, this._tripDaysComponent);
-
     const showingEvents = groupingEventsInOrderForDays(getSortedEvents(events));
-
     this._showedPointControllers = this._renderDay(showingEvents);
   }
 
   _renderDay(events, isGroupedByDay = true) {
-    const destinations = this._destinationsModel.getDestinations();
-    const offersModel = this._offersModel.getOffers();
-
     const tripDaysList = this._tripDaysComponent.getElement();
     tripDaysList.innerHTML = ``;
     let eventControllers = [];
-
     if (isGroupedByDay) {
       let dayNumber = 1;
       for (const eventsForDay of events) {
         const newDayComponent = new TripDayComponent(eventsForDay, dayNumber);
         const tripEventsList = newDayComponent.getElement().querySelector(`.trip-events__list`);
-        eventControllers = eventControllers.concat(eventsForDay.map((event) => renderEvent(event, tripEventsList, this._onDataChange, this._onViewChange, destinations, offersModel)));
+        eventControllers = eventControllers.concat(eventsForDay.map((event) => this._renderEvents(event, tripEventsList)));
         render(tripDaysList, newDayComponent);
         dayNumber++;
       }
     } else {
       const newDayComponent = new TripDayComponent(events);
       const tripEventsList = newDayComponent.getElement().querySelector(`.trip-events__list`);
-      eventControllers = events.map((event) => renderEvent(event, tripEventsList, this._onDataChange, this._onViewChange, destinations, offersModel));
+      eventControllers = events.map((event) => this._renderEvents(event, tripEventsList));
       render(tripDaysList, newDayComponent);
     }
     return eventControllers;
+  }
+
+  _renderEvents(event, container) {
+    const pointController = new PointController(container, this._onDataChange, this._onViewChange, this._destinationsModel.getDestinations(), this._offersModel.getOffers());
+    pointController.render(event, pointControllerMode.DEFAULT);
+    return pointController;
   }
 
   createEvent() {
@@ -141,22 +136,49 @@ export default class TripEventsController {
         controller.destroy();
         this._upDateEvent();
       } else {
-        this._eventsModel.addEvent(newData);
-        this._upDateEvent();
-        controller.destroy();
-        this._callHandlers(this._addedNewEventHandlers);
+        this._api.createEvent(newData)
+          .then((pointModel) => {
+            this._eventsModel.addEvent(pointModel);
+            controller.setDefaultButtonText();
+            controller.unblockForm();
+            this._upDateEvent();
+            controller.destroy();
+            this._callHandlers(this._addedNewEventHandlers);
+          })
+          .catch(() => {
+            controller.setDefaultButtonText();
+            controller.shake();
+            controller.unblockForm();
+          });
       }
     } else if (newData === null) {
-      this._eventsModel.removeEvent(oldData.id);
-      this._upDateEvent();
+      this._api.deleteEvent(oldData.id)
+        .then(() => {
+          this._eventsModel.removeEvent(oldData.id);
+          controller.setDefaultButtonText();
+          controller.unblockForm();
+          this._upDateEvent();
+        })
+        .catch(() => {
+          controller.setDefaultButtonText();
+          controller.shake();
+          controller.unblockForm();
+        });
     } else {
       this._api.updateEvent(oldData.id, newData)
         .then((pointModel) => {
           const isSuccess = this._eventsModel.upDateEvent(oldData.id, pointModel);
           if (isSuccess) {
+            controller.setDefaultButtonText();
+            controller.unblockForm();
             controller.render(pointModel, pointControllerMode.DEFAULT);
             this._upDateEvent();
           }
+        })
+        .catch(() => {
+          controller.setDefaultButtonText();
+          controller.shake();
+          controller.unblockForm();
         });
     }
   }

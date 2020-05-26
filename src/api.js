@@ -39,6 +39,15 @@ export default class API {
     .then((response) => response.json());
   }
 
+  createEvent(data) {
+    return this._load({url: `points`,
+      method: Method.POST,
+      body: JSON.stringify(data.toRAW()),
+      headers: new Headers({"Content-Type": `application/json`})})
+        .then((response) => response.json())
+        .then(PointModel.parseEvent);
+  }
+
   updateEvent(id, data) {
     return this._load({url: `points/${id}`,
       method: Method.PUT,
@@ -47,6 +56,11 @@ export default class API {
     })
       .then((response) => response.json())
       .then(PointModel.parseEvent);
+  }
+
+  deleteEvent(id) {
+    return this._load({url: `points/${id}`,
+      method: Method.DELETE});
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {

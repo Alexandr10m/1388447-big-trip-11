@@ -3,6 +3,8 @@ import EventEditorComponent from "../components/form-editor.js";
 import PointModel from "../models/point.js";
 import {render, replace, remove, RenderPosition} from "../utils/render.js";
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
 const Modes = {
   DEFAULT: `default`,
   EDIT: `edit`,
@@ -66,6 +68,8 @@ export default class PointController {
     this._eventEditorComponent.setFormSubmitHandler(() => {
       const formData = this._eventEditorComponent.getData();
       const data = this._parseFormData(formData);
+      this._eventEditorComponent.disabledForm();
+      this._eventEditorComponent.setData({saveButtonText: `Saving...`});
       this._onDataChange(this, event, data);
     });
 
@@ -77,6 +81,8 @@ export default class PointController {
     });
 
     this._eventEditorComponent.setDeleteButtonClickHandler(() => {
+      this._eventEditorComponent.disabledForm();
+      this._eventEditorComponent.setData({deleteButtonText: `Deleting...`});
       this._onDataChange(this, event, null);
     });
 
@@ -169,6 +175,32 @@ export default class PointController {
       "offers": typeOffer.offers,
       "destination": adapterDestination(destination),
     });
+  }
+
+  unblockForm() {
+    this._eventEditorComponent.enabledForm();
+  }
+
+  setDefaultButtonText() {
+    this._eventEditorComponent.setData({
+      saveButtonText: `Save`,
+      deleteButtonText: `Delete`,
+    });
+  }
+
+  shake() {
+    const formEvent = this._eventEditorComponent.getElement();
+    const event = this._eventComponent.getElement();
+
+    formEvent.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    event.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    formEvent.style.border = `1px solid red`;
+
+    setTimeout(() => {
+      formEvent.style.animation = ``;
+      event.style.animation = ``;
+      formEvent.style.border = ``;
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 }
 

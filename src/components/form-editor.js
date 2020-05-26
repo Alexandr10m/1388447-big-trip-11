@@ -3,9 +3,11 @@ import AbstractSmartComponent from "./abstract-smart-component.js";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 
-const ButtonOption = {
-  CANCEL: `Cancel`,
-  DELETE: `Delete`
+
+const DefaultButtonText = {
+  deleteButtonText: `Delete`,
+  saveButtonText: `Save`,
+  cancelButtonText: `Cancel`,
 };
 const checkPrice = (str) => {
   const userPrice = str.trim();
@@ -68,7 +70,7 @@ const createOffersTmpl = (offers) => {
 };
 const createFormEditorTmpl = (event, option) => {
   const {timeFrame, isFavourite} = event;
-  const {typeOfPoint, city, offers, destination, price, cityes, typesOfPoint} = option;
+  const {typeOfPoint, city, offers, destination, price, cityes, typesOfPoint, externalData} = option;
   const isEmptyEvent = !timeFrame;
   const isCity = !!city;
   const isDistination = !!destination;
@@ -80,7 +82,9 @@ const createFormEditorTmpl = (event, option) => {
   const optionsOfCityMarkup = createListOfCityesTmpl(cityes);
 
   const preposition = isActiveEvent(typeOfPoint) ? `in` : `to`;
-  const buttonOption = isEmptyEvent ? ButtonOption.CANCEL : ButtonOption.DELETE;
+
+  const saveButtonText = externalData.saveButtonText;
+  const buttonOption = isEmptyEvent ? externalData.cancelButtonText : externalData.deleteButtonText;
 
   const isOffersShowing = !!offers.length;
   const offersMarkup = isOffersShowing ? createOffersTmpl(offers) : ``;
@@ -131,7 +135,7 @@ const createFormEditorTmpl = (event, option) => {
           <input class="event__input  event__input--price" id="event-price-${index}" type="text" name="event-price" value="${price}">
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit">${saveButtonText}</button>
         <button class="event__reset-btn" type="reset">${buttonOption}</button>
         <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavourite ? `checked` : ``}>
         <label class="event__favorite-btn" for="event-favorite-1">
@@ -183,12 +187,15 @@ export default class EventEditor extends AbstractSmartComponent {
     this._destination = event.destination;
     this._timeFrame = event.timeFrame;
     this._flatpickrs = [];
+    this._externalData = DefaultButtonText;
     this._submitHandler = null;
     this._favouriteHandler = null;
     this._deleteHandler = null;
     this._closeHandler = null;
     this._clickEventsTypeList = null;
     this._inputCity = null;
+    this._inputs = null;
+    this._buttons = null;
 
     this._applyFlatpickr();
     this._subscribeOnEvents();
@@ -203,6 +210,7 @@ export default class EventEditor extends AbstractSmartComponent {
       price: this._price,
       cityes: this._cityes,
       typesOfPoint: this._typesOfPoint,
+      externalData: this._externalData,
     });
   }
 
@@ -321,6 +329,7 @@ export default class EventEditor extends AbstractSmartComponent {
     } else {
       this._price = input.value;
       input.setCustomValidity(``);
+      this.rerender();
       return true;
     }
   }
@@ -364,5 +373,36 @@ export default class EventEditor extends AbstractSmartComponent {
         this.rerender();
       }
     });
+  }
+
+  disabledForm() {
+    const form = this.getElement();
+    this._inputs = Array.from(form.querySelectorAll(`input`));
+    this._buttons = Array.from(form.querySelectorAll(`button`));
+
+    this._inputs.forEach((it) => {
+      it.disabled = true;
+    });
+
+    this._buttons.forEach((it) => {
+      it.disabled = true;
+    });
+  }
+
+  enabledForm() {
+    this._inputs.forEach((it) => {
+      it.disabled = false;
+    });
+    this._inputs = null;
+
+    this._buttons.forEach((it) => {
+      it.disabled = false;
+    });
+    this._buttons = null;
+  }
+
+  setData(data) {
+    this._externalData = Object.assign({}, DefaultButtonText, data);
+    this.rerender();
   }
 }
