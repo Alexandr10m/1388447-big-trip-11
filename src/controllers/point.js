@@ -3,6 +3,8 @@ import EventEditorComponent from "../components/form-editor.js";
 import PointModel from "../models/point.js";
 import {render, replace, remove, RenderPosition} from "../utils/render.js";
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
 const Modes = {
   DEFAULT: `default`,
   EDIT: `edit`,
@@ -184,6 +186,21 @@ export default class PointController {
       saveButtonText: `Save`,
       deleteButtonText: `Delete`,
     });
+  }
+
+  shake() {
+    const formEvent = this._eventEditorComponent.getElement();
+    const event = this._eventComponent.getElement();
+
+    formEvent.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    event.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    formEvent.style.border = `1px solid red`;
+
+    setTimeout(() => {
+      formEvent.style.animation = ``;
+      event.style.animation = ``;
+      formEvent.style.border = ``;
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 }
 

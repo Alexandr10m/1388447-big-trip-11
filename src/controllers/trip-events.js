@@ -152,6 +152,7 @@ export default class TripEventsController {
           })
           .catch(() => {
             controller.setDefaultButtonText();
+            controller.shake();
             controller.unblockForm();
           });
       }
@@ -165,6 +166,7 @@ export default class TripEventsController {
         })
         .catch(() => {
           controller.setDefaultButtonText();
+          controller.shake();
           controller.unblockForm();
         });
     } else {
@@ -180,6 +182,7 @@ export default class TripEventsController {
         })
         .catch(() => {
           controller.setDefaultButtonText();
+          controller.shake();
           controller.unblockForm();
         });
     }
