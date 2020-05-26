@@ -172,7 +172,6 @@ export default class TripEventsController {
             controller.setDefaultButtonText();
             controller.unblockForm();
             controller.render(pointModel, pointControllerMode.DEFAULT);
-            this._upDateEvent();
           }
         })
         .catch(() => {

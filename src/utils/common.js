@@ -1,5 +1,5 @@
 import moment from "moment";
-import {TYPE_OF_TRIP_POINT} from "../constants.js";
+import {TYPES_OF_TRIP_POINTS} from "../constants.js";
 
 const formatTime = (date) => {
   return moment(date).format(`hh:mm`);
@@ -133,7 +133,7 @@ const getTripInfo = (events) => {
 };
 
 const filteredTransferEvents = () => {
-  const filteredTypeOfPoint = TYPE_OF_TRIP_POINT.filter((type) => type !== `check-in` && type !== `sightseeing` && type !== `restaurant`);
+  const filteredTypeOfPoint = TYPES_OF_TRIP_POINTS.filter((type) => type !== `check-in` && type !== `sightseeing` && type !== `restaurant`);
   return filteredTypeOfPoint.map((it) => it.toUpperCase());
 };
 

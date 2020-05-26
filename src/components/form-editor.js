@@ -16,7 +16,7 @@ const checkPrice = (str) => {
     return false;
   }
   const number = Number(userPrice);
-  return Number.isNaN(number) ? false : true;
+  return !Number.isNaN(number);
 };
 const createDestinationPhotoTmpl = (photos) => {
   const imgList = photos.map((photo) => `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`).join(``);
@@ -231,9 +231,12 @@ export default class EventEditor extends AbstractSmartComponent {
   }
 
   setFavouritesButtonClickHandler(handler) {
-    this.getElement().querySelector(`.event__favorite-btn`)
-    .addEventListener(`change`, handler);
     this._favouriteHandler = handler;
+    this.getElement().querySelector(`.event__favorite-checkbox`)
+    .addEventListener(`change`, () => {
+      handler();
+      this.rerender();
+    });
   }
 
   setDeleteButtonClickHandler(handler) {

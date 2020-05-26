@@ -1,6 +1,6 @@
 const HIDDEN_CLASS = `trip-events--hidden`;
 
-const TYPE_OF_TRIP_POINT = [
+const TYPES_OF_TRIP_POINTS = [
   `taxi`,
   `bus`,
   `train`,
@@ -28,7 +28,7 @@ const MONTH_NAMES = [
   `DEC`,
 ];
 
-const SORT_OPTION = [
+const SORT_OPTIONS = [
   `Event`,
   `Time`,
   `Price`
@@ -46,4 +46,4 @@ const MenuOption = {
 };
 
 
-export {HIDDEN_CLASS, TYPE_OF_TRIP_POINT, MONTH_NAMES, SORT_OPTION, FilterType, MenuOption};
+export {HIDDEN_CLASS, TYPES_OF_TRIP_POINTS, MONTH_NAMES, SORT_OPTIONS, FilterType, MenuOption};

@@ -77,6 +77,7 @@ export default class PointController {
       const newPoint = PointModel.clone(event);
       newPoint.isFavourite = !newPoint.isFavourite;
 
+      this._eventEditorComponent.disabledForm();
       this._onDataChange(this, event, newPoint);
     });
 

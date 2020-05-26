@@ -1,14 +1,14 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import {TYPE_OF_TRIP_POINT} from "../constants.js";
+import {TYPES_OF_TRIP_POINTS} from "../constants.js";
 import {formatDiffDays, formatDay, filteredTransferEvents} from "../utils/common.js";
 
 
 const BAR_HEIGHT = 55;
-const heightMoneyChart = `${BAR_HEIGHT * TYPE_OF_TRIP_POINT.length}px`;
+const heightMoneyChart = `${BAR_HEIGHT * TYPES_OF_TRIP_POINTS.length}px`;
 const heightTrasportChart = `${BAR_HEIGHT * filteredTransferEvents().length}px`;
-const heightSpendTimeChart = `${BAR_HEIGHT * TYPE_OF_TRIP_POINT.length}px`;
+const heightSpendTimeChart = `${BAR_HEIGHT * TYPES_OF_TRIP_POINTS.length}px`;
 
 const calcMoneyOnActivityes = (events, activity) => {
   const allEventsByActivity = events.filter((event) => event.typeOfPoint === activity);
@@ -30,14 +30,14 @@ const countDaysByActivity = (events, activity) => {
 
 
 const renderMoneyChart = (ctx, events) => {
-  const typeOfPoint = TYPE_OF_TRIP_POINT.map((type) => type.toUpperCase());
+  const typeOfPoint = TYPES_OF_TRIP_POINTS.map((type) => type.toUpperCase());
   return new Chart(ctx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
       labels: typeOfPoint,
       datasets: [{
-        data: TYPE_OF_TRIP_POINT.map((type) => calcMoneyOnActivityes(events, type)),
+        data: TYPES_OF_TRIP_POINTS.map((type) => calcMoneyOnActivityes(events, type)),
         backgroundColor: `#ffffff`,
         hoverBackgroundColor: `#ffffff`,
         anchor: `start`
@@ -167,14 +167,14 @@ const renderTransportChart = (ctx, events) => {
 };
 
 const renderSpendTimeChart = (ctx, events) => {
-  const typeOfPoint = TYPE_OF_TRIP_POINT.map((type) => type.toUpperCase());
+  const typeOfPoint = TYPES_OF_TRIP_POINTS.map((type) => type.toUpperCase());
   return new Chart(ctx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
       labels: typeOfPoint,
       datasets: [{
-        data: TYPE_OF_TRIP_POINT.map((type) => countDaysByActivity(events, type)),
+        data: TYPES_OF_TRIP_POINTS.map((type) => countDaysByActivity(events, type)),
         backgroundColor: `#ffffff`,
         hoverBackgroundColor: `#ffffff`,
         anchor: `start`

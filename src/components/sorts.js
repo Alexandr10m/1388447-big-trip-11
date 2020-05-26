@@ -1,5 +1,5 @@
 import AbstractComponent from "./abstract-componenet.js";
-import {SORT_OPTION} from "../constants.js";
+import {SORT_OPTIONS} from "../constants.js";
 
 const SortType = {
   EVENT: `data-event`,
@@ -17,7 +17,7 @@ const createSortOptionMarkup = (name, isChecked) => {
 };
 
 const createSortTmpl = () => {
-  const sortOptionMarkup = SORT_OPTION.map((option, index) => createSortOptionMarkup(option, index === 0)).join(``);
+  const sortOptionMarkup = SORT_OPTIONS.map((option, index) => createSortOptionMarkup(option, index === 0)).join(``);
 
   return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
   <span class="trip-sort__item  trip-sort__item--day">Day</span>
