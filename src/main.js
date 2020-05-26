@@ -53,6 +53,5 @@ api.getOffers()
   tripEventsController.render();
 })
 .catch(() => {
-  // renderError();
   return [];
 });

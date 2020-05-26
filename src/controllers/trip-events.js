@@ -71,6 +71,7 @@ export default class TripEventsController {
       render(this._container, this._noPointsComponent);
       return;
     }
+
     if (this._noPointsComponent) {
       remove(this._noPointsComponent);
       this._noPointsComponent = null;
@@ -80,12 +81,10 @@ export default class TripEventsController {
     this._sortsComponent = new SortsComponent();
 
     render(this._container, this._sortsComponent);
+    render(this._container, this._tripDaysComponent);
     this._sortsComponent.setSortTypeChangeHandler(this._onSortTypeChange);
 
-    render(this._container, this._tripDaysComponent);
-
     const showingEvents = groupingEventsInOrderForDays(getSortedEvents(events));
-
     this._showedPointControllers = this._renderDay(showingEvents);
   }
 
