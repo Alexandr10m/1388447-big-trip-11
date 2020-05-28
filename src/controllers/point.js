@@ -8,13 +8,13 @@ const SHAKE_ANIMATION_TIMEOUT = 600;
 const Modes = {
   DEFAULT: `default`,
   EDIT: `edit`,
-  ADDING: `adding`
+  ADDING: `adding`,
 };
 
 const EmptyEvent = {
   typeOfPoint: `bus`,
   city: ``,
-  offers: ``,
+  offers: [],
   destination: null,
   price: ``,
   timeFrame: null,
@@ -47,6 +47,7 @@ export default class PointController {
     this._eventEditorComponent = null;
     this._mode = Modes.DEFAULT;
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
+    this._isFavouriteChanged = false;
   }
 
   render(event, mode) {
@@ -58,7 +59,7 @@ export default class PointController {
     this._cityes = this._destinations.map((it) => it.name);
 
     this._eventComponent = new EventComponent(event);
-    this._eventEditorComponent = new EventEditorComponent(event, this._typesOfPoint, this._cityes);
+    this._eventEditorComponent = new EventEditorComponent(event, this._typesOfPoint, this._cityes, this._offers);
 
     this._eventComponent.setEditButtonClickHandler(() => {
       this._replaceEventToEditor();
@@ -66,8 +67,8 @@ export default class PointController {
     });
 
     this._eventEditorComponent.setFormSubmitHandler(() => {
-      const formData = this._eventEditorComponent.getData();
-      const data = this._parseFormData(formData);
+      const {formData, form} = this._eventEditorComponent.getData();
+      const data = this._parseFormData(formData, form);
       this._eventEditorComponent.disabledForm();
       this._eventEditorComponent.setData({saveButtonText: `Saving...`});
       this._onDataChange(this, event, data);
@@ -77,6 +78,7 @@ export default class PointController {
       const newPoint = PointModel.clone(event);
       newPoint.isFavourite = !newPoint.isFavourite;
 
+      this._isFavouriteChanged = true;
       this._eventEditorComponent.disabledForm();
       this._onDataChange(this, event, newPoint);
     });
@@ -109,7 +111,12 @@ export default class PointController {
         if (oldEventComponent && oldEventEditorComponent) {
           replace(this._eventComponent, oldEventComponent);
           replace(this._eventEditorComponent, oldEventEditorComponent);
-          this._replaceEditorToEvent();
+
+          if (!this._isFavouriteChanged) {
+            this._replaceEditorToEvent();
+          }
+
+          this._isFavouriteChanged = false;
         } else {
           render(this._container, this._eventComponent);
         }
@@ -161,11 +168,19 @@ export default class PointController {
     remove(this._eventEditorComponent);
     document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
-  _parseFormData(formData) {
+  _parseFormData(formData, form) {
     const type = formData.get(`event-type`);
-    const typeOffer = this._offers.find((it) => it.type === type);
+    const offers = [];
+    const offersElement = form.querySelectorAll(`.event__offer-checkbox:checked + label[for^="event"]`);
     const city = formData.get(`event-destination`);
     const destination = this._destinations.find((it) => it.name === city);
+
+    offersElement.forEach((offer) => {
+      offers.push({
+        title: offer.querySelector(`.event__offer-title`).textContent,
+        price: Number(offer.querySelector(`.event__offer-price`).textContent),
+      });
+    });
 
     return new PointModel({
       "base_price": Number(formData.get(`event-price`)),
@@ -173,7 +188,7 @@ export default class PointController {
       "date_to": parseDate(formData.get(`event-end-time`)).toISOString(),
       "is_favorite": !!formData.get(`event-favorite`),
       "type": type,
-      "offers": typeOffer.offers,
+      "offers": offers,
       "destination": adapterDestination(destination),
     });
   }

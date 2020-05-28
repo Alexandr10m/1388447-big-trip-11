@@ -63,6 +63,11 @@ export default class TripEventsController {
   render() {
     remove(this._loadingComponent);
 
+    if (this._noPointsComponent) {
+      remove(this._noPointsComponent);
+      this._noPointsComponent = null;
+    }
+
     const events = this._eventsModel.getEvents();
     const isNoEvents = events.length === 0;
 
@@ -72,10 +77,6 @@ export default class TripEventsController {
       return;
     }
 
-    if (this._noPointsComponent) {
-      remove(this._noPointsComponent);
-      this._noPointsComponent = null;
-    }
 
     this._tripDaysComponent = new TripDaysComponent();
     this._sortsComponent = new SortsComponent();

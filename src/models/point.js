@@ -14,6 +14,7 @@ export default class Point {
       finish: data[`date_to`] ? new Date(data[`date_to`]) : null,
     };
     this.price = data[`base_price`];
+
   }
 
   toRAW() {

@@ -51,13 +51,13 @@ const createListEventTypeTmpl = (eventsTypes, checked) => {
   </fieldset>`
   );
 };
-const createOffersTmpl = (offers) => {
+const createOffersTmpl = (eventOffers = [], offers = []) => {
   const offersMarkup = offers.map((offer, index) => {
-    const isChecked = index === 0 || index === 1 ? `checked=""` : ``;
+    const isChecked = !!eventOffers.find((eventOffer) => offer.title === eventOffer.title);
     const name = offer.title.toLowerCase().split(` `).join(`-`);
     return `
     <div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}-${index}" type="checkbox" name="event-offer-${name}" ${isChecked}>
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}-${index}" type="checkbox" name="event-offer-${name}" ${isChecked ? `checked` : ``}>
     <label class="event__offer-label" for="event-offer-${name}-${index}">
       <span class="event__offer-title">${offer.title}</span>
       +
@@ -70,7 +70,7 @@ const createOffersTmpl = (offers) => {
 };
 const createFormEditorTmpl = (event, option) => {
   const {timeFrame, isFavourite} = event;
-  const {typeOfPoint, city, offers, destination, price, cityes, typesOfPoint, externalData} = option;
+  const {typeOfPoint, offers, city, destination, price, cityes, typesOfPoint, externalData, allOffers} = option;
   const isEmptyEvent = !timeFrame;
   const isCity = !!city;
   const isDistination = !!destination;
@@ -86,11 +86,15 @@ const createFormEditorTmpl = (event, option) => {
   const saveButtonText = externalData.saveButtonText;
   const buttonOption = isEmptyEvent ? externalData.cancelButtonText : externalData.deleteButtonText;
 
-  const isOffersShowing = !!offers.length;
-  const offersMarkup = isOffersShowing ? createOffersTmpl(offers) : ``;
+  const possibleOffers = allOffers.find((it) => it.type === typeOfPoint);
+  const isOffersShowing = possibleOffers.offers && possibleOffers.offers.length;
+
+  const offersMarkup = isOffersShowing ? createOffersTmpl(offers, possibleOffers.offers) : ``;
 
   const destinationPhotosMarkup = isCity && isDistination ? createDestinationPhotoTmpl(destination.photos) : ``;
   const isDistinationShowing = isCity && isDistination ? !!destination.description : false;
+
+  const isShowingFavourite = !isEmptyEvent;
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -137,13 +141,13 @@ const createFormEditorTmpl = (event, option) => {
 
         <button class="event__save-btn  btn  btn--blue" type="submit">${saveButtonText}</button>
         <button class="event__reset-btn" type="reset">${buttonOption}</button>
-        <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavourite ? `checked` : ``}>
+        ${isShowingFavourite ? `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavourite ? `checked` : ``}>
         <label class="event__favorite-btn" for="event-favorite-1">
           <span class="visually-hidden">Add to favorite</span>
           <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
             <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
           </svg>
-        </label>
+        </label>` : ``}
 
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
@@ -175,7 +179,7 @@ const createFormEditorTmpl = (event, option) => {
 };
 
 export default class EventEditor extends AbstractSmartComponent {
-  constructor(event, types, cityes) {
+  constructor(event, types, cityes, allOffers) {
     super();
     this._event = event;
     this._typesOfPoint = types;
@@ -196,6 +200,7 @@ export default class EventEditor extends AbstractSmartComponent {
     this._inputCity = null;
     this._inputs = null;
     this._buttons = null;
+    this._allOffers = allOffers;
 
     this._applyFlatpickr();
     this._subscribeOnEvents();
@@ -211,6 +216,7 @@ export default class EventEditor extends AbstractSmartComponent {
       cityes: this._cityes,
       typesOfPoint: this._typesOfPoint,
       externalData: this._externalData,
+      allOffers: this._allOffers,
     });
   }
 
@@ -223,6 +229,7 @@ export default class EventEditor extends AbstractSmartComponent {
 
     form.addEventListener(`submit`, (evt) => {
       evt.preventDefault();
+      this._updateOffers();
 
       if (this._validityInputCity(inputDescription) && this._priceInputHandler(inputPrice)) {
         this._submitHandler();
@@ -232,11 +239,14 @@ export default class EventEditor extends AbstractSmartComponent {
 
   setFavouritesButtonClickHandler(handler) {
     this._favouriteHandler = handler;
-    this.getElement().querySelector(`.event__favorite-checkbox`)
-    .addEventListener(`change`, () => {
-      handler();
-      this.rerender();
-    });
+    const favouriteElement = this.getElement().querySelector(`.event__favorite-checkbox`);
+
+    if (favouriteElement) {
+      favouriteElement.addEventListener(`change`, () => {
+        handler();
+        this.rerender();
+      });
+    }
   }
 
   setDeleteButtonClickHandler(handler) {
@@ -258,7 +268,11 @@ export default class EventEditor extends AbstractSmartComponent {
 
   getData() {
     const form = this.getElement();
-    return new FormData(form);
+
+    return {
+      formData: new FormData(form),
+      form: this.getElement()
+    };
   }
 
   removeElement() {
@@ -332,7 +346,6 @@ export default class EventEditor extends AbstractSmartComponent {
     } else {
       this._price = input.value;
       input.setCustomValidity(``);
-      this.rerender();
       return true;
     }
   }
@@ -344,6 +357,20 @@ export default class EventEditor extends AbstractSmartComponent {
     priceElement.addEventListener(`input`, (evt) => {
       this._priceInputHandler(evt.target);
     });
+  }
+
+  _updateOffers() {
+    const offers = [];
+    const offersElement = this.getElement().querySelectorAll(`.event__offer-checkbox:checked + label[for^="event"]`);
+
+    offersElement.forEach((offer) => {
+      offers.push({
+        title: offer.querySelector(`.event__offer-title`).textContent,
+        price: Number(offer.querySelector(`.event__offer-price`).textContent),
+      });
+    });
+
+    this._offers = offers;
   }
 
   setInputEventTypeClickHandler(handler) {
@@ -358,7 +385,7 @@ export default class EventEditor extends AbstractSmartComponent {
       }
       const input = evt.target.previousElementSibling;
       this._typeOfPoint = input.value;
-      this._offers = handler(input.value);
+      this._offers = [];
       this.rerender();
     });
   }
